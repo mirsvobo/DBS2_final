@@ -1,75 +1,52 @@
 class CommentModel {
-    constructor(db) {
-        this.db = db;
+    constructor(pool) {
+        this.pool = pool;
     }
 
-    // Přidání nového komentáře
-    async addComment(prispevekId, uzivatelId) {
-        const query = `INSERT INTO Komentar (PrispevekID, UzivatelID) VALUES (?, ?)`;
-        const values = [prispevekId, uzivatelId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(result.insertId); // Vrátí ID nového komentáře
-            });
-        });
+    // Metoda pro získání všech komentářů podle ID příspěvku
+    async getCommentsForPost(postId) {
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Komentar WHERE PrispevekID = ?', [postId]);
+            return rows;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Úprava existujícího komentáře
-    async updateComment(commentId, newPrispevekId, newUzivatelId) {
-        const query = `UPDATE Komentar SET PrispevekID = ?, UzivatelID = ? WHERE KomentarID = ?`;
-        const values = [newPrispevekId, newUzivatelId, commentId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšná aktualizace komentáře
-            });
-        });
+    // Metoda pro přidání nového komentáře
+    async addComment(commentData) {
+        try {
+            const query = 'INSERT INTO Komentar (PrispevekID, UzivatelID) VALUES (?, ?)';
+            const [result] = await this.pool.query(query, [commentData.postId, commentData.userId]);
+            return result.insertId;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Smazání existujícího komentáře
+    // Metoda pro aktualizaci existujícího komentáře
+    async updateComment(commentId, newData) {
+        try {
+            const query = 'UPDATE Komentar SET Obsah = ? WHERE KomentarID = ?';
+            await this.pool.query(query, [newData.content, commentId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Metoda pro smazání komentáře
     async deleteComment(commentId) {
-        const query = `DELETE FROM Komentar WHERE KomentarID = ?`;
-        const values = [commentId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné smazání komentáře
-            });
-        });
+        try {
+            const query = 'DELETE FROM Komentar WHERE KomentarID = ?';
+            await this.pool.query(query, [commentId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Získání komentáře podle ID
-    async getCommentById(commentId) {
-        const query = `SELECT * FROM Komentar WHERE KomentarID = ?`;
-        const values = [commentId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows[0] || null); // Vrátí první nalezený komentář nebo null, pokud není nalezen žádný
-            });
-        });
-    }
-
-    // Získání všech komentářů podle ID příspěvku
-    async getCommentsByPostId(prispevekId) {
-        const query = `SELECT * FROM Komentar WHERE PrispevekID = ?`;
-        const values = [prispevekId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows); // Vrátí všechny nalezené komentáře
-            });
-        });
-    }
-
-    // Další metody pro získávání nebo manipulaci s komentáři...
-
+    // Další metody modelu pro manipulaci s komentáři...
 }
 
 module.exports = CommentModel;

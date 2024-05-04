@@ -1,49 +1,30 @@
 class UserPrivateMessageModel {
-    constructor(db) {
-        this.db = db;
+    constructor(pool) {
+        this.pool = pool;
     }
 
-    // Přiřazení soukromé zprávy k uživateli
-    async assignPrivateMessageToUser(messageId, userId) {
-        const query = `INSERT INTO UzivatelSoukromaZprava (SoukromazpravaID, UzivatelID) VALUES (?, ?)`;
-        const values = [messageId, userId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné přiřazení soukromé zprávy k uživateli
-            });
-        });
+    // Metoda pro uložení soukromé zprávy vazby mezi uživatelem a soukromou zprávou
+    async addUserPrivateMessage(userId, messageId) {
+        try {
+            const query = 'INSERT INTO UzivatelSoukromaZprava (SoukromazpravaID, UzivatelID) VALUES (?, ?)';
+            const [result] = await this.pool.query(query, [messageId, userId]);
+            return result.insertId;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Získání všech soukromých zpráv přiřazených k uživateli
-    async getPrivateMessagesForUser(userId) {
-        const query = `SELECT * FROM UzivatelSoukromaZprava WHERE UzivatelID = ?`;
-        const values = [userId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows); // Vrátí všechny soukromé zprávy přiřazené k uživateli
-            });
-        });
+    // Metoda pro získání všech soukromých zpráv daného uživatele
+    async getUserPrivateMessages(userId) {
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM SoukromaZprava WHERE SoukromazpravaID IN (SELECT SoukromazpravaID FROM UzivatelSoukromaZprava WHERE UzivatelID = ?)', [userId]);
+            return rows;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Smazání všech přiřazených soukromých zpráv k uživateli
-    async deletePrivateMessagesForUser(userId) {
-        const query = `DELETE FROM UzivatelSoukromaZprava WHERE UzivatelID = ?`;
-        const values = [userId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné smazání všech přiřazených soukromých zpráv k uživateli
-            });
-        });
-    }
-
-    // Další metody pro manipulaci s přiřazením soukromých zpráv k uživatelům...
-
+    // Další metody modelu pro manipulaci s uživatelskými soukromými zprávami...
 }
 
 module.exports = UserPrivateMessageModel;

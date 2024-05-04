@@ -1,75 +1,62 @@
 class PostModel {
-    constructor(db) {
-        this.db = db;
+    constructor(pool) {
+        this.pool = pool;
     }
 
-    // Přidání nového příspěvku
-    async addPost(postData) {
-        const { timestamp, content, userId, postType } = postData;
-        const query = `INSERT INTO Prispevek (Cas_odeslani, Obsah_prispevku, UzivatelID, Typ_prispevku) VALUES (?, ?, ?, ?)`;
-        const values = [timestamp, content, userId, postType];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(result.insertId); // Vrátí ID nového příspěvku
-            });
-        });
-    }
-
-    // Úprava existujícího příspěvku
-    async updatePost(postId, newContent) {
-        const query = `UPDATE Prispevek SET Obsah_prispevku = ? WHERE PrispevekID = ?`;
-        const values = [newContent, postId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšná aktualizace příspěvku
-            });
-        });
-    }
-
-    // Smazání existujícího příspěvku
-    async deletePost(postId) {
-        const query = `DELETE FROM Prispevek WHERE PrispevekID = ?`;
-        const values = [postId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné smazání příspěvku
-            });
-        });
-    }
-
-    // Získání všech příspěvků
+    // Metoda pro získání všech příspěvků
     async getAllPosts() {
-        const query = `SELECT * FROM Prispevek`;
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows); // Vrátí všechny příspěvky
-            });
-        });
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Prispevek');
+            return rows;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Získání příspěvku podle ID
+    // Metoda pro získání příspěvku podle ID
     async getPostById(postId) {
-        const query = `SELECT * FROM Prispevek WHERE PrispevekID = ?`;
-        const values = [postId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows[0] || null); // Vrátí první nalezený příspěvek nebo null, pokud není nalezen žádný
-            });
-        });
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Prispevek WHERE PrispevekID = ?', [postId]);
+            return rows[0] || null;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Další metody pro manipulaci s příspěvky...
+    // Metoda pro přidání nového příspěvku
+    async addPost(postData) {
+        try {
+            const query = 'INSERT INTO Prispevek (Cas_odeslani, Obsah_prispevku, UzivatelID) VALUES (?, ?, ?)';
+            const [result] = await this.pool.query(query, [postData.timestamp, postData.content, postData.userId]);
+            return result.insertId;
+        } catch (error) {
+            throw error;
+        }
+    }
 
+    // Metoda pro aktualizaci příspěvku
+    async updatePost(postId, newData) {
+        try {
+            const query = 'UPDATE Prispevek SET Obsah_prispevku = ? WHERE PrispevekID = ?';
+            await this.pool.query(query, [newData.content, postId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Metoda pro smazání příspěvku
+    async deletePost(postId) {
+        try {
+            const query = 'DELETE FROM Prispevek WHERE PrispevekID = ?';
+            await this.pool.query(query, [postId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Další metody modelu pro manipulaci s příspěvky...
 }
 
 module.exports = PostModel;

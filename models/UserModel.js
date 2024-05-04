@@ -1,83 +1,84 @@
 const bcrypt = require('bcrypt');
 
 class UserModel {
-    constructor(db) {
-        this.db = db;
+    constructor(pool) {
+        this.pool = pool;
     }
 
-    async addUser(username, password, jmeno, prijmeni, kolejID, oborID, opravneniID, univerzitaID) {
-        const hashedPassword = await bcrypt.hash(password, 10); // Hashování hesla
-
-        const query = `INSERT INTO Uzivatel (Username, Password, Jmeno, Prijmeni, KolejID, OborID, OpravneniID, UniverzitaID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-        const values = [username, hashedPassword, jmeno, prijmeni, kolejID, oborID, opravneniID, univerzitaID];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(result.insertId);
-            });
-        });
+    // Metoda pro registraci nového uživatele
+    async registerUser(userData) {
+        try {
+            const hashedPassword = await bcrypt.hash(userData.password, 10); // Hashování hesla
+            const query = 'INSERT INTO Uzivatel (Jmeno, Prijmeni, Username, Password, OpravneniID) VALUES (?, ?, ?, ?, ?)';
+            const [result] = await this.pool.query(query, [userData.firstName, userData.lastName, userData.username, hashedPassword, userData.permissionId]);
+            return result.insertId;
+        } catch (error) {
+            throw error;
+        }
     }
 
+    // Metoda pro autentizaci uživatele při přihlašování
+    async authenticateUser(username, password) {
+        try {
+            const [rows, fields] = await this.pool.query('SELECT UzivatelID, Password FROM Uzivatel WHERE Username = ?', [username]);
+            if (rows.length === 0) {
+                return null; // Uživatel neexistuje
+            }
+            const user = rows[0];
+            const passwordMatch = await bcrypt.compare(password, user.Password); // Porovnání hesel
+            if (passwordMatch) {
+                return user.UzivatelID; // Vrací ID uživatele, pokud hesla odpovídají
+            } else {
+                return null; // Hesla se neshodují
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Metoda pro získání uživatele podle ID
     async getUserById(userId) {
-        const query = `SELECT * FROM Uzivatel WHERE UzivatelID = ?`;
-        const values = [userId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows[0]); // Vrátí uživatele nebo null, pokud není nalezen
-            });
-        });
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Uzivatel WHERE UzivatelID = ?', [userId]);
+            return rows[0] || null;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    async updateUserPassword(userId, newPassword) {
-        const hashedPassword = await bcrypt.hash(newPassword, 10); // Hashování nového hesla
-
-        const query = `UPDATE Uzivatel SET Password = ? WHERE UzivatelID = ?`;
-        const values = [hashedPassword, userId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšná aktualizace hesla
-            });
-        });
+    // Metoda pro získání všech uživatelů
+    async getAllUsers() {
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Uzivatel');
+            return rows;
+        } catch (error) {
+            throw error;
+        }
     }
 
+    // Metoda pro aktualizaci informací o uživateli
+    async updateUser(userId, newData) {
+        try {
+            const query = 'UPDATE Uzivatel SET Jmeno = ?, Prijmeni = ?, Username = ? WHERE UzivatelID = ?';
+            await this.pool.query(query, [newData.firstName, newData.lastName, newData.username, userId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Metoda pro smazání uživatele
     async deleteUser(userId) {
-        const query = `DELETE FROM Uzivatel WHERE UzivatelID = ?`;
-        const values = [userId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné smazání uživatele
-            });
-        });
+        try {
+            const query = 'DELETE FROM Uzivatel WHERE UzivatelID = ?';
+            await this.pool.query(query, [userId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    async validateLogin(username, password) {
-        const query = `SELECT * FROM Uzivatel WHERE Username = ?`;
-        const values = [username];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, async (err, rows) => {
-                if (err) return reject(err);
-                if (rows.length === 0) return resolve(null); // Uživatel nenalezen
-
-                const user = rows[0];
-                const passwordMatch = await bcrypt.compare(password, user.Password); // Porovnání hashů hesel
-
-                if (passwordMatch) {
-                    resolve(user); // Přihlašovací údaje jsou platné
-                } else {
-                    resolve(null); // Neplatné přihlašovací údaje
-                }
-            });
-        });
-    }
-
+    // Další metody modelu pro manipulaci s uživateli...
 }
 
 module.exports = UserModel;

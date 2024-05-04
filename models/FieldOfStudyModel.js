@@ -1,74 +1,62 @@
 class FieldOfStudyModel {
-    constructor(db) {
-        this.db = db;
+    constructor(pool) {
+        this.pool = pool;
     }
 
-    // Přidání nového oboru studia
-    async addFieldOfStudy(fieldOfStudyName) {
-        const query = `INSERT INTO Obor (Nazev_oboru) VALUES (?)`;
-        const values = [fieldOfStudyName];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(result.insertId); // Vrátí ID nového oboru studia
-            });
-        });
-    }
-
-    // Úprava existujícího oboru studia
-    async updateFieldOfStudy(fieldOfStudyId, newFieldOfStudyName) {
-        const query = `UPDATE Obor SET Nazev_oboru = ? WHERE OborID = ?`;
-        const values = [newFieldOfStudyName, fieldOfStudyId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšná aktualizace oboru studia
-            });
-        });
-    }
-
-    // Smazání existujícího oboru studia
-    async deleteFieldOfStudy(fieldOfStudyId) {
-        const query = `DELETE FROM Obor WHERE OborID = ?`;
-        const values = [fieldOfStudyId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné smazání oboru studia
-            });
-        });
-    }
-
-    // Získání všech oborů studia
+    // Metoda pro získání všech oborů studia
     async getAllFieldsOfStudy() {
-        const query = `SELECT * FROM Obor`;
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows); // Vrátí všechny obory studia
-            });
-        });
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Obor');
+            return rows;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Získání oboru studia podle ID
-    async getFieldOfStudyById(fieldOfStudyId) {
-        const query = `SELECT * FROM Obor WHERE OborID = ?`;
-        const values = [fieldOfStudyId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows[0] || null); // Vrátí první nalezený obor studia nebo null, pokud není nalezen žádný
-            });
-        });
+    // Metoda pro získání oboru studia podle ID
+    async getFieldOfStudyById(fieldId) {
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Obor WHERE OborID = ?', [fieldId]);
+            return rows[0] || null;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Další metody pro manipulaci s obory studia...
+    // Metoda pro přidání nového oboru studia
+    async addFieldOfStudy(fieldName) {
+        try {
+            const query = 'INSERT INTO Obor (Nazev_oboru) VALUES (?)';
+            const [result] = await this.pool.query(query, [fieldName]);
+            return result.insertId;
+        } catch (error) {
+            throw error;
+        }
+    }
 
+    // Metoda pro aktualizaci oboru studia
+    async updateFieldOfStudy(fieldId, newData) {
+        try {
+            const query = 'UPDATE Obor SET Nazev_oboru = ? WHERE OborID = ?';
+            await this.pool.query(query, [newData.fieldName, fieldId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Metoda pro smazání oboru studia
+    async deleteFieldOfStudy(fieldId) {
+        try {
+            const query = 'DELETE FROM Obor WHERE OborID = ?';
+            await this.pool.query(query, [fieldId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Další metody modelu pro manipulaci s obory studia...
 }
 
 module.exports = FieldOfStudyModel;

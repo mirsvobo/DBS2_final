@@ -1,73 +1,38 @@
 class ReportModel {
-    constructor(db) {
-        this.db = db;
+    constructor(pool) {
+        this.pool = pool;
     }
 
-    // Přidání nového hlášení
-    async addReport(reportContent, commentId, userId) {
-        const query = `INSERT INTO Hlaseni (Cas_hlaseni, Obsah_hlaseni, KomentarID, UzivatelID) VALUES (NOW(), ?, ?, ?)`;
-        const values = [reportContent, commentId, userId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(result.insertId); // Vrátí ID nového hlášení
-            });
-        });
-    }
-
-    // Úprava existujícího hlášení
-    async updateReport(reportId, newReportContent) {
-        const query = `UPDATE Hlaseni SET Obsah_hlaseni = ? WHERE HlaseniID = ?`;
-        const values = [newReportContent, reportId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšná aktualizace hlášení
-            });
-        });
-    }
-
-    // Smazání existujícího hlášení
-    async deleteReport(reportId) {
-        const query = `DELETE FROM Hlaseni WHERE HlaseniID = ?`;
-        const values = [reportId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné smazání hlášení
-            });
-        });
-    }
-
-    // Získání všech hlášení
     async getAllReports() {
-        const query = `SELECT * FROM Hlaseni`;
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows); // Vrátí všechna hlášení
-            });
-        });
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Hlaseni');
+            return rows;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Získání hlášení podle ID
-    async getReportById(reportId) {
-        const query = `SELECT * FROM Hlaseni WHERE HlaseniID = ?`;
-        const values = [reportId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows[0] || null); // Vrátí první nalezené hlášení nebo null, pokud není nalezeno žádné
-            });
-        });
+    async addReport(reportData) {
+        try {
+            const query = 'INSERT INTO Hlaseni (Obsah_hlaseni, KomentarID, UzivatelID) VALUES (?, ?, ?)';
+            const [result] = await this.pool.query(query, [reportData.content, reportData.commentId, reportData.userId]);
+            return result.insertId;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Další metody pro manipulaci s hlášeními...
+    async deleteReport(reportId) {
+        try {
+            const query = 'DELETE FROM Hlaseni WHERE HlaseniID = ?';
+            await this.pool.query(query, [reportId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Další metody modelu pro manipulaci s hlášeními...
 
 }
 

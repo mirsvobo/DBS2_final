@@ -1,74 +1,62 @@
 class PostTypeModel {
-    constructor(db) {
-        this.db = db;
+    constructor(pool) {
+        this.pool = pool;
     }
 
-    // Přidání nového typu příspěvku
-    async addPostType(postType) {
-        const query = `INSERT INTO TypPrispevku (Typ) VALUES (?)`;
-        const values = [postType];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(result.insertId); // Vrátí ID nového typu příspěvku
-            });
-        });
-    }
-
-    // Úprava existujícího typu příspěvku
-    async updatePostType(postTypeId, newPostType) {
-        const query = `UPDATE TypPrispevku SET Typ = ? WHERE TypprispevkuID = ?`;
-        const values = [newPostType, postTypeId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšná aktualizace typu příspěvku
-            });
-        });
-    }
-
-    // Smazání existujícího typu příspěvku
-    async deletePostType(postTypeId) {
-        const query = `DELETE FROM TypPrispevku WHERE TypprispevkuID = ?`;
-        const values = [postTypeId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné smazání typu příspěvku
-            });
-        });
-    }
-
-    // Získání všech typů příspěvků
+    // Metoda pro získání všech typů příspěvků
     async getAllPostTypes() {
-        const query = `SELECT * FROM TypPrispevku`;
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows); // Vrátí všechny typy příspěvků
-            });
-        });
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM TypPrispevku');
+            return rows;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Získání typu příspěvku podle ID
-    async getPostTypeById(postTypeId) {
-        const query = `SELECT * FROM TypPrispevku WHERE TypprispevkuID = ?`;
-        const values = [postTypeId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows[0] || null); // Vrátí první nalezený typ příspěvku nebo null, pokud není nalezen žádný
-            });
-        });
+    // Metoda pro získání typu příspěvku podle ID
+    async getPostTypeById(typeId) {
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM TypPrispevku WHERE TypprispevkuID = ?', [typeId]);
+            return rows[0] || null;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Další metody pro manipulaci s typy příspěvků...
+    // Metoda pro přidání nového typu příspěvku
+    async addPostType(typeName) {
+        try {
+            const query = 'INSERT INTO TypPrispevku (Typ) VALUES (?)';
+            const [result] = await this.pool.query(query, [typeName]);
+            return result.insertId;
+        } catch (error) {
+            throw error;
+        }
+    }
 
+    // Metoda pro aktualizaci typu příspěvku
+    async updatePostType(typeId, newName) {
+        try {
+            const query = 'UPDATE TypPrispevku SET Typ = ? WHERE TypprispevkuID = ?';
+            await this.pool.query(query, [newName, typeId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Metoda pro smazání typu příspěvku
+    async deletePostType(typeId) {
+        try {
+            const query = 'DELETE FROM TypPrispevku WHERE TypprispevkuID = ?';
+            await this.pool.query(query, [typeId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Další metody modelu pro manipulaci s typy příspěvků...
 }
 
 module.exports = PostTypeModel;

@@ -1,62 +1,41 @@
 class PostPostTypeModel {
-    constructor(db) {
-        this.db = db;
+    constructor(pool) {
+        this.pool = pool;
     }
 
-    // Přidání nového přiřazení příspěvku k typu příspěvku
-    async addPostToPostType(postId, postTypeId) {
-        const query = `INSERT INTO PrispevekTypPrispevku (PrispevekID, TypprispevkuID) VALUES (?, ?)`;
-        const values = [postId, postTypeId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné přiřazení příspěvku k typu příspěvku
-            });
-        });
+    // Metoda pro přidání typu příspěvku k příspěvku
+    async addPostTypeToPost(postId, typeId) {
+        try {
+            const query = 'INSERT INTO PrispevekTypPrispevku (PrispevekID, TypprispevkuID) VALUES (?, ?)';
+            const [result] = await this.pool.query(query, [postId, typeId]);
+            return result.insertId;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Úprava existujícího přiřazení příspěvku k typu příspěvku
-    async updatePostToPostType(postId, newPostTypeId) {
-        const query = `UPDATE PrispevekTypPrispevku SET TypprispevkuID = ? WHERE PrispevekID = ?`;
-        const values = [newPostTypeId, postId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšná aktualizace přiřazení příspěvku k typu příspěvku
-            });
-        });
+    // Metoda pro odebrání typu příspěvku od příspěvku
+    async removePostTypeFromPost(postId, typeId) {
+        try {
+            const query = 'DELETE FROM PrispevekTypPrispevku WHERE PrispevekID = ? AND TypprispevkuID = ?';
+            await this.pool.query(query, [postId, typeId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Smazání existujícího přiřazení příspěvku k typu příspěvku
-    async deletePostToPostType(postId) {
-        const query = `DELETE FROM PrispevekTypPrispevku WHERE PrispevekID = ?`;
-        const values = [postId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné smazání přiřazení příspěvku k typu příspěvku
-            });
-        });
+    // Metoda pro získání typů příspěvků spojených s příspěvkem
+    async getPostTypesForPost(postId) {
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM PrispevekTypPrispevku WHERE PrispevekID = ?', [postId]);
+            return rows;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Získání typu příspěvku podle ID příspěvku
-    async getPostTypeByPostId(postId) {
-        const query = `SELECT TypprispevkuID FROM PrispevekTypPrispevku WHERE PrispevekID = ?`;
-        const values = [postId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows[0] ? rows[0].TypprispevkuID : null); // Vrátí ID typu příspěvku nebo null, pokud není nalezen žádný záznam
-            });
-        });
-    }
-
-    // Další metody pro manipulaci s přiřazením příspěvků k typům příspěvků...
-
+    // Další metody modelu pro manipulaci s příspěvky a jejich typy...
 }
 
 module.exports = PostPostTypeModel;

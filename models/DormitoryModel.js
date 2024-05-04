@@ -1,73 +1,57 @@
 class DormitoryModel {
-    constructor(db) {
-        this.db = db;
+    constructor(pool) {
+        this.pool = pool;
     }
 
-    // Přidání nového záznamu o koleji
-    async addDormitory(address, name) {
-        const query = `INSERT INTO Kolej (Adresa, Nazev) VALUES (POINT(?), ?)`;
-        const values = [address, name];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(result.insertId); // Vrátí ID nového záznamu o kolej
-            });
-        });
-    }
-
-    // Úprava existujícího záznamu o koleji
-    async updateDormitory(dormitoryId, newAddress, newName) {
-        const query = `UPDATE Kolej SET Adresa = POINT(?), Nazev = ? WHERE KolejID = ?`;
-        const values = [newAddress, newName, dormitoryId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšná aktualizace záznamu o kolej
-            });
-        });
-    }
-
-    // Smazání existujícího záznamu o koleji
-    async deleteDormitory(dormitoryId) {
-        const query = `DELETE FROM Kolej WHERE KolejID = ?`;
-        const values = [dormitoryId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, result) => {
-                if (err) return reject(err);
-                resolve(); // Úspěšné smazání záznamu o kolej
-            });
-        });
-    }
-
-    // Získání všech záznamů o kolejích
     async getAllDormitories() {
-        const query = `SELECT * FROM Kolej`;
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows); // Vrátí všechny záznamy o kolejích
-            });
-        });
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Kolej');
+            return rows;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Získání záznamu o kolej podle ID
     async getDormitoryById(dormitoryId) {
-        const query = `SELECT * FROM Kolej WHERE KolejID = ?`;
-        const values = [dormitoryId];
-
-        return new Promise((resolve, reject) => {
-            this.db.query(query, values, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows[0] || null); // Vrátí první nalezený záznam o kolej nebo null, pokud není nalezen žádný
-            });
-        });
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Kolej WHERE KolejID = ?', [dormitoryId]);
+            return rows[0] || null;
+        } catch (error) {
+            throw error;
+        }
     }
 
-    // Další metody pro manipulaci s kolejemi...
+    async addDormitory(dormitoryData) {
+        try {
+            const query = 'INSERT INTO Kolej (Nazev, Adresa) VALUES (?, POINT(?, ?))';
+            const [result] = await this.pool.query(query, [dormitoryData.name, dormitoryData.latitude, dormitoryData.longitude]);
+            return result.insertId;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateDormitory(dormitoryId, newData) {
+        try {
+            const query = 'UPDATE Kolej SET Nazev = ?, Adresa = POINT(?, ?) WHERE KolejID = ?';
+            await this.pool.query(query, [newData.name, newData.latitude, newData.longitude, dormitoryId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteDormitory(dormitoryId) {
+        try {
+            const query = 'DELETE FROM Kolej WHERE KolejID = ?';
+            await this.pool.query(query, [dormitoryId]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Další metody modelu pro manipulaci s kolejemi...
 
 }
 
