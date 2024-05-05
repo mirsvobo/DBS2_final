@@ -5,36 +5,19 @@ class UserModel {
         this.pool = pool;
     }
 
-    // Metoda pro registraci nového uživatele
-    async registerUser(userData) {
+    async addUser(userData) {
         try {
-            const hashedPassword = await bcrypt.hash(userData.password, 10); // Hashování hesla
+            // Hash hesla
+            const hashedPassword = await bcrypt.hash(userData.Password, 10);
+
             const query = 'INSERT INTO Uzivatel (Jmeno, Prijmeni, Username, Password, OpravneniID) VALUES (?, ?, ?, ?, ?)';
-            const [result] = await this.pool.query(query, [userData.firstName, userData.lastName, userData.username, hashedPassword, userData.permissionId]);
+            const [result] = await this.pool.query(query, [userData.Jmeno, userData.Prijmeni, userData.Username, hashedPassword, userData.OpravneniID]);
             return result.insertId;
         } catch (error) {
             throw error;
         }
     }
 
-    // Metoda pro autentizaci uživatele při přihlašování
-    async authenticateUser(username, password) {
-        try {
-            const [rows, fields] = await this.pool.query('SELECT UzivatelID, Password FROM Uzivatel WHERE Username = ?', [username]);
-            if (rows.length === 0) {
-                return null; // Uživatel neexistuje
-            }
-            const user = rows[0];
-            const passwordMatch = await bcrypt.compare(password, user.Password); // Porovnání hesel
-            if (passwordMatch) {
-                return user.UzivatelID; // Vrací ID uživatele, pokud hesla odpovídají
-            } else {
-                return null; // Hesla se neshodují
-            }
-        } catch (error) {
-            throw error;
-        }
-    }
 
     // Metoda pro získání uživatele podle ID
     async getUserById(userId) {
@@ -78,7 +61,14 @@ class UserModel {
         }
     }
 
-    // Další metody modelu pro manipulaci s uživateli...
+    async getUserByUsername(username) {
+        try {
+            const [rows, fields] = await this.pool.query('SELECT * FROM Uzivatel WHERE Username = ?', [username]);
+            return rows[0] || null;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = UserModel;

@@ -1,13 +1,12 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import dotenv from 'dotenv';
-import mysql from 'mysql2';
+const express = require('express');
+const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
+const mysql = require('mysql2');
 
 dotenv.config();
 
 const app = express();
 
-// Nastavení middleware pro zpracování JSON těla požadavků
 app.use(bodyParser.json());
 
 // Připojení k databázi
@@ -18,6 +17,8 @@ const pool = mysql.createPool({
     database: process.env.MYSQL_DATABASE,
 }).promise();
 
+const UserRoutes = require("./routes/users");
+app.use("/users", UserRoutes);
 
 // Spuštění serveru na portu 3000
 const port = process.env.PORT || 3000;
