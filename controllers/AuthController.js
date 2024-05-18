@@ -1,44 +1,53 @@
 const UserModel = require('../models/UserModel');
-const { generateToken } = require('../utils/auth');
 const bcrypt = require('bcrypt');
-const pool = require('../app.js');
-const userModel = new UserModel(pool);
+const logger = require('../logger');
 
 class AuthController {
-    static async login(req, res) {
-        const { username, password } = req.body;
+    constructor(userModel) {
+        this.userModel = userModel;
+    }
 
+    renderRegister(req, res) {
+        res.render('register');
+    }
+
+    async register(req, res) {
+        const { username, email, password, firstName, lastName } = req.body;
         try {
-            const user = await userModel.getUserByUsername(username);
-            if (!user) {
-                return res.status(401).json({ message: 'Špatné přihlašovací údaje.' });
-            }
-
-            const passwordMatch = await bcrypt.compare(password, user.Password);
-            if (!passwordMatch) {
-                return res.status(401).json({ message: 'Špatné přihlašovací údaje.' });
-            }
-
-            const token = generateToken(user);
-            res.json({ token });
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const userData = {
+                Username: username,
+                Email: email,
+                Password: hashedPassword,
+                Jmeno: firstName,
+                Prijmeni: lastName,
+                OpravneniID: 2 // Předpokládáme, že 2 je role registrovaného uživatele
+            };
+            const userId = await this.userModel.addUser(userData);
+            req.session.user = { id: userId, username, role: 2 };
+            res.redirect('/');
         } catch (error) {
+            logger.error(`Error in AuthController.register: ${error.message}`);
             res.status(500).json({ message: error.message });
         }
     }
 
-    static async register(req, res) {
-        const { Jmeno, Prijmeni, Username, Password } = req.body;
+    renderLogin(req, res) {
+        res.render('login');
+    }
 
+    async login(req, res) {
+        const { username, password } = req.body;
         try {
-            const hashedPassword = await bcrypt.hash(Password, 10);
-            const userData = { Jmeno, Prijmeni, Username, Password: hashedPassword, OpravneniID: 2 }; // OpravneniID: 2 = registrovaný uživatel
-            const userId = await userModel.addUser(userData);
-
-            const user = await userModel.getUserById(userId);
-            const token = generateToken(user);
-
-            res.status(201).json({ token });
+            const user = await this.userModel.getUserByUsername(username);
+            if (user && await bcrypt.compare(password, user.Password)) {
+                req.session.user = { id: user.UzivatelID, username: user.Username, role: user.OpravneniID };
+                res.redirect('/');
+            } else {
+                res.status(401).json({ message: 'Invalid credentials' });
+            }
         } catch (error) {
+            logger.error(`Error in AuthController.login: ${error.message}`);
             res.status(500).json({ message: error.message });
         }
     }

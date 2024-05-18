@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hlavní stránka</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header>
+    <h1>Univerzitní Fórum</h1>
+    <% if (user) { %>
+        <p>Vítejte, <%= user.username %>!</p>
+        <a href="/auth/logout">Odhlásit se</a>
+    <% } else { %>
+        <a href="/auth/login">Přihlásit se</a>
+        <a href="/auth/register">Registrovat se</a>
+    <% } %>
+</header>
+<main>
+    <h2>Poslední příspěvky</h2>
+    <% posts.forEach(post => { %>
+        <article>
+            <h3><%= post.title %></h3>
+            <p><%= post.content %></p>
+            <p>Autor: <%= post.author %> | Datum: <%= post.date %></p>
+            <% if (user && (user.id === post.userId || user.role === 3)) { %>
+                <a href="/posts/<%= post.id %>/edit">Upravit</a>
+                <form action="/posts/<%= post.id %>?_method=DELETE" method="POST">
+                    <button type="submit">Smazat</button>
+                </form>
+            <% } %>
+        </article>
+    <% }) %>
+</main>
+</body>
+</html>

@@ -1,0 +1,54 @@
+2024-05-18T16:33:18.547Z [info]: Server běží na portu 3000
+2024-05-18T16:33:23.554Z [info]: ::1 - - [18/May/2024:16:33:23 +0000] "GET / HTTP/1.1" 500 67 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:34:30.823Z [info]: Server běží na portu 3000
+2024-05-18T16:34:41.997Z [error]: TypeError: Cannot read properties of undefined (reading 'query')
+    at PostModel.getAllPosts (C:\Users\mirsv\IdeaProjects\DBS2_final\models\PostModel.js:8:44)
+    at C:\Users\mirsv\IdeaProjects\DBS2_final\app.js:72:39
+    at Layer.handle [as handle_request] (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:280:10)
+    at logger (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\morgan\index.js:144:5)
+2024-05-18T16:34:42.003Z [info]: ::1 - - [18/May/2024:16:34:42 +0000] "GET / HTTP/1.1" 500 67 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:36:16.716Z [error]: TypeError: Cannot read properties of undefined (reading 'query')
+    at PostModel.getAllPosts (C:\Users\mirsv\IdeaProjects\DBS2_final\models\PostModel.js:8:44)
+    at C:\Users\mirsv\IdeaProjects\DBS2_final\app.js:72:39
+    at Layer.handle [as handle_request] (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:280:10)
+    at logger (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\morgan\index.js:144:5)
+2024-05-18T16:36:16.719Z [info]: ::1 - - [18/May/2024:16:36:16 +0000] "GET / HTTP/1.1" 500 67 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:36:25.052Z [info]: Server běží na portu 3000
+2024-05-18T16:36:27.496Z [info]: ::1 - - [18/May/2024:16:36:27 +0000] "GET / HTTP/1.1" 200 920 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:41:18.690Z [info]: Server běží na portu 3000
+2024-05-18T16:41:22.149Z [info]: ::1 - - [18/May/2024:16:41:22 +0000] "GET /auth/register HTTP/1.1" 200 1033 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:41:32.464Z [error]: Error in AuthController.register: Cannot read properties of undefined (reading 'userModel')
+2024-05-18T16:41:32.466Z [info]: ::1 - - [18/May/2024:16:41:32 +0000] "POST /auth/register HTTP/1.1" 500 71 "http://localhost:3000/auth/register" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:42:46.814Z [info]: Server běží na portu 3000
+2024-05-18T16:42:51.926Z [error]: Error in AuthController.register: Cannot read properties of undefined (reading 'userModel')
+2024-05-18T16:42:51.932Z [info]: ::1 - - [18/May/2024:16:42:51 +0000] "POST /auth/register HTTP/1.1" 500 71 "http://localhost:3000/auth/register" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:42:55.898Z [error]: Error in AuthController.register: Cannot read properties of undefined (reading 'userModel')
+2024-05-18T16:42:55.900Z [info]: ::1 - - [18/May/2024:16:42:55 +0000] "POST /auth/register HTTP/1.1" 500 71 "http://localhost:3000/auth/register" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:44:47.201Z [error]: Error in AuthController.register: Cannot read properties of undefined (reading 'userModel')
+2024-05-18T16:44:47.203Z [info]: ::1 - - [18/May/2024:16:44:47 +0000] "POST /auth/register HTTP/1.1" 500 71 "http://localhost:3000/auth/register" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:48:39.302Z [info]: Server běží na portu 3000
+2024-05-18T16:48:46.978Z [info]: ::1 - - [18/May/2024:16:48:46 +0000] "POST /auth/register HTTP/1.1" 302 46 "http://localhost:3000/auth/register" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:48:46.988Z [info]: ::1 - - [18/May/2024:16:48:46 +0000] "GET / HTTP/1.1" 404 139 "http://localhost:3000/auth/register" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:48:55.121Z [info]: ::1 - - [18/May/2024:16:48:55 +0000] "GET /auth/register HTTP/1.1" 200 818 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:49:14.228Z [info]: ::1 - - [18/May/2024:16:49:14 +0000] "GET /users? HTTP/1.1" 404 144 "-" "PostmanRuntime/7.39.0"
+2024-05-18T16:49:22.828Z [info]: ::1 - - [18/May/2024:16:49:22 +0000] "GET /users HTTP/1.1" 404 144 "-" "PostmanRuntime/7.39.0"
+2024-05-18T16:50:46.481Z [info]: ::1 - - [18/May/2024:16:50:46 +0000] "GET / HTTP/1.1" 404 139 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:50:49.465Z [info]: ::1 - - [18/May/2024:16:50:49 +0000] "GET / HTTP/1.1" 404 139 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:51:56.466Z [info]: Server běží na portu 3000
+2024-05-18T16:51:58.139Z [info]: ::1 - - [18/May/2024:16:51:58 +0000] "GET / HTTP/1.1" 200 920 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:52:01.083Z [info]: ::1 - - [18/May/2024:16:52:01 +0000] "GET /auth/login HTTP/1.1" 200 700 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:52:05.230Z [info]: ::1 - - [18/May/2024:16:52:05 +0000] "POST /auth/login HTTP/1.1" 302 46 "http://localhost:3000/auth/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:52:05.238Z [info]: ::1 - - [18/May/2024:16:52:05 +0000] "GET / HTTP/1.1" 200 902 "http://localhost:3000/auth/login" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+2024-05-18T16:52:17.278Z [info]: ::1 - - [18/May/2024:16:52:17 +0000] "GET /auth/logout HTTP/1.1" 404 150 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"

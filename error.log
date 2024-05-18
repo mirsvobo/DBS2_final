@@ -1,0 +1,26 @@
+2024-05-18T16:34:41.997Z [error]: TypeError: Cannot read properties of undefined (reading 'query')
+    at PostModel.getAllPosts (C:\Users\mirsv\IdeaProjects\DBS2_final\models\PostModel.js:8:44)
+    at C:\Users\mirsv\IdeaProjects\DBS2_final\app.js:72:39
+    at Layer.handle [as handle_request] (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:280:10)
+    at logger (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\morgan\index.js:144:5)
+2024-05-18T16:36:16.716Z [error]: TypeError: Cannot read properties of undefined (reading 'query')
+    at PostModel.getAllPosts (C:\Users\mirsv\IdeaProjects\DBS2_final\models\PostModel.js:8:44)
+    at C:\Users\mirsv\IdeaProjects\DBS2_final\app.js:72:39
+    at Layer.handle [as handle_request] (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\express\lib\router\index.js:280:10)
+    at logger (C:\Users\mirsv\IdeaProjects\DBS2_final\node_modules\morgan\index.js:144:5)
+2024-05-18T16:41:32.464Z [error]: Error in AuthController.register: Cannot read properties of undefined (reading 'userModel')
+2024-05-18T16:42:51.926Z [error]: Error in AuthController.register: Cannot read properties of undefined (reading 'userModel')
+2024-05-18T16:42:55.898Z [error]: Error in AuthController.register: Cannot read properties of undefined (reading 'userModel')
+2024-05-18T16:44:47.201Z [error]: Error in AuthController.register: Cannot read properties of undefined (reading 'userModel')

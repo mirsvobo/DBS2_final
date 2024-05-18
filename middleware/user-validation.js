@@ -1,14 +1,5 @@
-const Joi = require('joi');
+const { createUserSchema } = require('../schemas/user');
 const ExpressError = require('../utils/ExpressError');
-
-const createUserSchema = Joi.object({
-    Jmeno: Joi.string().required(),
-    Prijmeni: Joi.string().required(),
-    Email: Joi.string().required(),
-    Username: Joi.string().required(),
-    Password: Joi.string().required(),
-    OpravneniID: Joi.number().integer().required()
-});
 
 module.exports.validateUser = (req, res, next) => {
     const { error, value } = createUserSchema.validate(req.body);

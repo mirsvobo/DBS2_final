@@ -1,9 +1,25 @@
+const UserModel = require('../models/UserModel');
+
 class UserController {
+    constructor() {
+        this.userModel = new UserModel();
+    }
+
     async addUser(req, res) {
+        const { username, email, password, firstName, lastName } = req.body;
         try {
-            const userData = req.body;
-            const userId = await req.userModel.addUser(userData);
-            res.status(201).json({ message: 'Uživatel byl vytvořen', userId });
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const userData = {
+                Username: username,
+                Email: email,
+                Password: hashedPassword,
+                Jmeno: firstName,
+                Prijmeni: lastName,
+                OpravneniID: 2 // Předpokládáme, že 2 je role registrovaného uživatele
+            };
+            const userId = await this.userModel.addUser(userData);
+            req.session.user = { id: userId, username, role: 2 };
+            res.redirect('/');
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
@@ -11,7 +27,7 @@ class UserController {
 
     async getAllUsers(req, res) {
         try {
-            const users = await req.userModel.getAllUsers();
+            const users = await this.userModel.getAllUsers();
             res.json(users);
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -19,23 +35,9 @@ class UserController {
     }
 
     async getUserById(req, res) {
+        const userId = req.params.id;
         try {
-            const userId = req.params.id;
-            const user = await req.userModel.getUserById(userId);
-            if (user) {
-                res.json(user);
-            } else {
-                res.status(404).json({ message: 'Uživatel nenalezen' });
-            }
-        } catch (error) {
-            res.status(500).json({ message: error.message });
-        }
-    }
-
-    async getUserByUsername(req, res) {
-        try {
-            const username = req.params.username;
-            const user = await req.userModel.getUserByUsername(username);
+            const user = await this.userModel.getUserById(userId);
             if (user) {
                 res.json(user);
             } else {
@@ -47,10 +49,10 @@ class UserController {
     }
 
     async updateUser(req, res) {
+        const userId = req.params.id;
+        const newData = req.body;
         try {
-            const userId = req.params.id;
-            const newData = req.body;
-            await req.userModel.updateUser(userId, newData);
+            await this.userModel.updateUser(userId, newData);
             res.json({ message: 'Uživatel byl aktualizován' });
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -58,9 +60,9 @@ class UserController {
     }
 
     async deleteUser(req, res) {
+        const userId = req.params.id;
         try {
-            const userId = req.params.id;
-            await req.userModel.deleteUser(userId);
+            await this.userModel.deleteUser(userId);
             res.json({ message: 'Uživatel byl odstraněn' });
         } catch (error) {
             res.status(500).json({ message: error.message });

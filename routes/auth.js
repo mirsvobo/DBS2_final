@@ -1,10 +1,18 @@
 const express = require('express');
-const router = express.Router();
+const UserModel = require('../models/UserModel');
 const AuthController = require('../controllers/AuthController');
-const { validateUser } = require('../middleware/user-validation');
 const catchAsync = require('../utils/catchAsync');
 
-router.post('/login', catchAsync(AuthController.login));
-router.post('/register', validateUser, catchAsync(AuthController.register));
+const router = express.Router();
+const userModel = new UserModel();
+const authController = new AuthController(userModel);
+
+router.route('/register')
+    .get(authController.renderRegister.bind(authController))
+    .post(catchAsync(authController.register.bind(authController)));
+
+router.route('/login')
+    .get(authController.renderLogin.bind(authController))
+    .post(catchAsync(authController.login.bind(authController)));
 
 module.exports = router;
