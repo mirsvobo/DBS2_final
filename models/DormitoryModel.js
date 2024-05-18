@@ -3,10 +3,11 @@ class DormitoryModel {
         this.pool = pool;
     }
 
-    async getAllDormitories() {
+    async addDormitory(dormitoryData) {
         try {
-            const [rows, fields] = await this.pool.query('SELECT * FROM Kolej');
-            return rows;
+            const query = 'INSERT INTO Kolej (Adresa, Nazev) VALUES (ST_GeomFromText(?), ?)';
+            const [result] = await this.pool.query(query, [`POINT(${dormitoryData.latitude} ${dormitoryData.longitude})`, dormitoryData.Nazev]);
+            return result.insertId;
         } catch (error) {
             throw error;
         }
@@ -14,18 +15,17 @@ class DormitoryModel {
 
     async getDormitoryById(dormitoryId) {
         try {
-            const [rows, fields] = await this.pool.query('SELECT * FROM Kolej WHERE KolejID = ?', [dormitoryId]);
+            const [rows] = await this.pool.query('SELECT KolejID, ST_AsText(Adresa) as Adresa, Nazev FROM Kolej WHERE KolejID = ?', [dormitoryId]);
             return rows[0] || null;
         } catch (error) {
             throw error;
         }
     }
 
-    async addDormitory(dormitoryData) {
+    async getAllDormitories() {
         try {
-            const query = 'INSERT INTO Kolej (Nazev, Adresa) VALUES (?, POINT(?, ?))';
-            const [result] = await this.pool.query(query, [dormitoryData.name, dormitoryData.latitude, dormitoryData.longitude]);
-            return result.insertId;
+            const [rows] = await this.pool.query('SELECT KolejID, ST_AsText(Adresa) as Adresa, Nazev FROM Kolej');
+            return rows;
         } catch (error) {
             throw error;
         }
@@ -33,8 +33,8 @@ class DormitoryModel {
 
     async updateDormitory(dormitoryId, newData) {
         try {
-            const query = 'UPDATE Kolej SET Nazev = ?, Adresa = POINT(?, ?) WHERE KolejID = ?';
-            await this.pool.query(query, [newData.name, newData.latitude, newData.longitude, dormitoryId]);
+            const query = 'UPDATE Kolej SET Adresa = ST_GeomFromText(?), Nazev = ? WHERE KolejID = ?';
+            await this.pool.query(query, [`POINT(${newData.latitude} ${newData.longitude})`, newData.Nazev, dormitoryId]);
             return true;
         } catch (error) {
             throw error;
@@ -50,9 +50,6 @@ class DormitoryModel {
             throw error;
         }
     }
-
-    // Další metody modelu pro manipulaci s kolejemi...
-
 }
 
 module.exports = DormitoryModel;

@@ -3,39 +3,44 @@ class PermissionModel {
         this.pool = pool;
     }
 
-    // Metoda pro získání všech oprávnění
-    async getAllPermissions() {
-        try {
-            const [rows, fields] = await this.pool.query('SELECT * FROM Opravneni');
-            return rows;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    // Metoda pro přidání nového oprávnění
     async addPermission(permissionData) {
         try {
             const query = 'INSERT INTO Opravneni (Moderator, Povoleni_hlaseni, Povoleni_komentare, Povoleni_prispevky, Povoleni_zpravy) VALUES (?, ?, ?, ?, ?)';
-            const [result] = await this.pool.query(query, [permissionData.moderator, permissionData.allowReports, permissionData.allowComments, permissionData.allowPosts, permissionData.allowMessages]);
+            const [result] = await this.pool.query(query, [permissionData.Moderator, permissionData.Povoleni_hlaseni, permissionData.Povoleni_komentare, permissionData.Povoleni_prispevky, permissionData.Povoleni_zpravy]);
             return result.insertId;
         } catch (error) {
             throw error;
         }
     }
 
-    // Metoda pro úpravu existujícího oprávnění
+    async getPermissionById(permissionId) {
+        try {
+            const [rows] = await this.pool.query('SELECT * FROM Opravneni WHERE OpravneniID = ?', [permissionId]);
+            return rows[0] || null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAllPermissions() {
+        try {
+            const [rows] = await this.pool.query('SELECT * FROM Opravneni');
+            return rows;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async updatePermission(permissionId, newData) {
         try {
             const query = 'UPDATE Opravneni SET Moderator = ?, Povoleni_hlaseni = ?, Povoleni_komentare = ?, Povoleni_prispevky = ?, Povoleni_zpravy = ? WHERE OpravneniID = ?';
-            await this.pool.query(query, [newData.moderator, newData.allowReports, newData.allowComments, newData.allowPosts, newData.allowMessages, permissionId]);
+            await this.pool.query(query, [newData.Moderator, newData.Povoleni_hlaseni, newData.Povoleni_komentare, newData.Povoleni_prispevky, newData.Povoleni_zpravy, permissionId]);
             return true;
         } catch (error) {
             throw error;
         }
     }
 
-    // Metoda pro smazání oprávnění
     async deletePermission(permissionId) {
         try {
             const query = 'DELETE FROM Opravneni WHERE OpravneniID = ?';
@@ -45,8 +50,6 @@ class PermissionModel {
             throw error;
         }
     }
-
-    // Další metody modelu pro manipulaci s oprávněními...
 }
 
 module.exports = PermissionModel;

@@ -3,28 +3,34 @@ class UserPrivateMessageModel {
         this.pool = pool;
     }
 
-    // Metoda pro uložení soukromé zprávy vazby mezi uživatelem a soukromou zprávou
-    async addUserPrivateMessage(userId, messageId) {
+    async addUserPrivateMessage(userPrivateMessageData) {
         try {
             const query = 'INSERT INTO UzivatelSoukromaZprava (SoukromazpravaID, UzivatelID) VALUES (?, ?)';
-            const [result] = await this.pool.query(query, [messageId, userId]);
+            const [result] = await this.pool.query(query, [userPrivateMessageData.SoukromazpravaID, userPrivateMessageData.UzivatelID]);
             return result.insertId;
         } catch (error) {
             throw error;
         }
     }
 
-    // Metoda pro získání všech soukromých zpráv daného uživatele
-    async getUserPrivateMessages(userId) {
+    async getUserPrivateMessagesByUserId(userId) {
         try {
-            const [rows, fields] = await this.pool.query('SELECT * FROM SoukromaZprava WHERE SoukromazpravaID IN (SELECT SoukromazpravaID FROM UzivatelSoukromaZprava WHERE UzivatelID = ?)', [userId]);
+            const [rows] = await this.pool.query('SELECT * FROM UzivatelSoukromaZprava WHERE UzivatelID = ?', [userId]);
             return rows;
         } catch (error) {
             throw error;
         }
     }
 
-    // Další metody modelu pro manipulaci s uživatelskými soukromými zprávami...
+    async deleteUserPrivateMessage(userPrivateMessageId) {
+        try {
+            const query = 'DELETE FROM UzivatelSoukromaZprava WHERE SoukromazpravaID = ? AND UzivatelID = ?';
+            await this.pool.query(query, [userPrivateMessageId.SoukromazpravaID, userPrivateMessageId.UzivatelID]);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 module.exports = UserPrivateMessageModel;

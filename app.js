@@ -17,15 +17,18 @@ const pool = mysql.createPool({
 });
 
 const UserRoutes = require("./routes/users");
-const UserModel = require('./models/UserModel');
-const userModel = new UserModel(pool);
-
-app.use((req, res, next) => {
-    req.userModel = userModel;
-    next();
-});
+const PostRoutes = require("./routes/posts");
+const DormitoryRoutes = require("./routes/dormitories");
+const CommentRoutes = require("./routes/comments");
+const PermissionRoutes = require("./routes/permissions");
+const UniversityRoutes = require("./routes/universities");
 
 app.use("/users", UserRoutes);
+app.use("/posts", PostRoutes);
+app.use("/dormitories", DormitoryRoutes);
+app.use("/comments", CommentRoutes);
+app.use("/permissions", PermissionRoutes);
+app.use("/universities", UniversityRoutes);
 
 app.get('/', (req, res) => {
     res.send('Vítejte na naší API!');
