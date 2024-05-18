@@ -1,49 +1,60 @@
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 20px;
-    background-color: #f4f4f4;
-}
-
-h1, h2 {
-    color: #333;
-}
-
-ul {
-    list-style: none;
+/* Reset základních stylů */
+* {
+    margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
-li {
+/* Tělo stránky */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Formuláře */
+form.form-signin {
     background: #fff;
-    margin: 10px 0;
-    padding: 10px;
+    padding: 2rem;
+    margin: 2rem auto;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+}
+
+form.form-signin .form-group {
+    margin-bottom: 1rem;
+}
+
+form.form-signin label {
+    margin-bottom: 0.5rem;
+}
+
+form.form-signin input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+form.form-signin button {
+    margin-top: 1rem;
+}
+
+/* Příspěvky */
+.post {
+    margin-bottom: 1rem;
+    padding: 1rem;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-a {
-    color: #3498db;
-    text-decoration: none;
+.post h2 {
+    margin-bottom: 0.5rem;
 }
 
-a:hover {
-    text-decoration: underline;
-}
-
-p {
+.post .meta {
     color: #666;
-}
-
-button {
-    background-color: #3498db;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #2980b9;
+    font-size: 0.9rem;
 }

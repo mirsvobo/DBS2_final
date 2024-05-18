@@ -1,7 +1,9 @@
 const PostModel = require('../models/PostModel');
-const pool = require('../db'); // Import poolu z db.js
+const CommentModel = require('../models/CommentModel');
+const pool = require('../db');
 
 const postModel = new PostModel(pool);
+const commentModel = new CommentModel(pool);
 
 const getAllPosts = async (req, res) => {
     try {
@@ -27,8 +29,9 @@ const getPostById = async (req, res) => {
     const postId = req.params.id;
     try {
         const post = await postModel.getPostById(postId);
+        const comments = await commentModel.getCommentsByPostId(postId);
         if (post) {
-            res.json(post);
+            res.render('postDetail', { user: req.session.user, post, comments });
         } else {
             res.status(404).json({ message: 'Příspěvek nenalezen' });
         }

@@ -13,6 +13,9 @@ const { isLoggedIn, isAuthorOrAdmin } = require('../middleware/auth');
 router.get('/', getAllPosts);
 
 // Definice cesty pro vytvoření nového příspěvku
+router.get('/new', isLoggedIn, (req, res) => {
+    res.render('newPost', { user: req.session.user });
+});
 router.post('/', isLoggedIn, createPost);
 
 // Definice cesty pro získání jednoho příspěvku podle ID
