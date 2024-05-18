@@ -1,4 +1,6 @@
-// UserController.js
+const UserModel = require('../models/UserModel');
+const pool = require('../app.js'); // Import the pool from your db configuration file
+const userModel = new UserModel(pool);
 
 class UserController {
     constructor(userModel) {
@@ -54,6 +56,20 @@ class UserController {
             const userId = req.params.id;
             await this.userModel.deleteUser(userId);
             res.json({ message: 'Uživatel byl odstraněn' });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+
+    async getUserByUsername(req, res) {
+        try {
+            const username = req.params.username;
+            const user = await this.userModel.getUserByUsername(username);
+            if (user) {
+                res.json(user);
+            } else {
+                res.status(404).json({ message: 'Uživatel nenalezen' });
+            }
         } catch (error) {
             res.status(500).json({ message: error.message });
         }

@@ -1,5 +1,5 @@
-module.exports = (functionToBeWrapped) => {
+module.exports = func => {
     return (req, res, next) => {
-        functionToBeWrapped(req, res, next).catch(next);
+        func(req, res, next).catch(next);
     };
 };

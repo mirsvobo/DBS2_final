@@ -9,7 +9,6 @@ const app = express();
 
 app.use(bodyParser.json());
 
-// Připojení k databázi
 const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
@@ -20,7 +19,6 @@ const pool = mysql.createPool({
 const UserRoutes = require("./routes/users");
 app.use("/users", UserRoutes);
 
-// Spuštění serveru na portu 3000
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server běží na portu ${port}`);

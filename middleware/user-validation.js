@@ -1,24 +1,21 @@
-// validateUserMiddleware.js
-
-const UserModel = require('../models/UserModel');
+const Joi = require('joi');
 const ExpressError = require('../utils/ExpressError');
 
-// Middleware pro ověření uživatele
-const validateUser = async (req, res, next) => {
-    try {
-        const userData = req.body;
-        const userModel = new UserModel();
-        const isValid = await userModel.validateUser(userData); // Metoda pro ověření uživatele ve vašem modelu
+const createUserSchema = Joi.object({
+    Jmeno: Joi.string().required(),
+    Prijmeni: Joi.string().required(),
+    Username: Joi.string().required(),
+    Password: Joi.string().required(),
+    OpravneniID: Joi.number().integer().required()
+});
 
-        if (!isValid) {
-            throw new ExpressError('Neplatné uživatelské údaje', 400);
-        }
-
-        req.validatedUser = userData;
+module.exports.validateUser = (req, res, next) => {
+    const { error, value } = createUserSchema.validate(req.body);
+    if (error) {
+        const message = error.details.map((e) => e.message).join(',');
+        throw new ExpressError(message, 400);
+    } else {
+        req.validatedUser = value;
         next();
-    } catch (error) {
-        next(error);
     }
 };
-
-module.exports = validateUser;
