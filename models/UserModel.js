@@ -16,9 +16,18 @@ class UserModel {
         }
     }
 
+    async getUserByUsername(username) {
+        try {
+            const [rows] = await this.pool.query('SELECT * FROM Uzivatel WHERE Username = ?', [username]);
+            return rows[0] || null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async getUserById(userId) {
         try {
-            const [rows, fields] = await this.pool.query('SELECT * FROM Uzivatel WHERE UzivatelID = ?', [userId]);
+            const [rows] = await this.pool.query('SELECT * FROM Uzivatel WHERE UzivatelID = ?', [userId]);
             return rows[0] || null;
         } catch (error) {
             throw error;
@@ -27,7 +36,7 @@ class UserModel {
 
     async getAllUsers() {
         try {
-            const [rows, fields] = await this.pool.query('SELECT * FROM Uzivatel');
+            const [rows] = await this.pool.query('SELECT * FROM Uzivatel');
             return rows;
         } catch (error) {
             throw error;
@@ -49,15 +58,6 @@ class UserModel {
             const query = 'DELETE FROM Uzivatel WHERE UzivatelID = ?';
             await this.pool.query(query, [userId]);
             return true;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async getUserByUsername(username) {
-        try {
-            const [rows, fields] = await this.pool.query('SELECT * FROM Uzivatel WHERE Username = ?', [username]);
-            return rows[0] || null;
         } catch (error) {
             throw error;
         }
