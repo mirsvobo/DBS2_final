@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const PostTypeModel = require('../models/PostTypeModel');
 const catchAsync = require('../utils/catchAsync');
+const { validatePostType } = require('../middleware/postType-validation');
+const { authenticate, authorize } = require('../middleware/auth');
 
-const pool = require('../app.js');
+const pool = require('../app');
 const postTypeModel = new PostTypeModel(pool);
 
 router
@@ -12,7 +14,7 @@ router
         const postTypes = await postTypeModel.getAllPostTypes();
         res.json(postTypes);
     }))
-    .post(catchAsync(async (req, res) => {
+    .post(authenticate, authorize([3]), validatePostType, catchAsync(async (req, res) => {
         const postTypeData = req.body;
         const postTypeId = await postTypeModel.addPostType(postTypeData);
         res.status(201).json({ message: 'Typ příspěvku byl vytvořen', postTypeId });
@@ -29,13 +31,13 @@ router
             res.status(404).json({ message: 'Typ příspěvku nenalezen' });
         }
     }))
-    .put(catchAsync(async (req, res) => {
+    .put(authenticate, authorize([3]), validatePostType, catchAsync(async (req, res) => {
         const postTypeId = req.params.id;
         const newData = req.body;
         await postTypeModel.updatePostType(postTypeId, newData);
         res.json({ message: 'Typ příspěvku byl aktualizován' });
     }))
-    .delete(catchAsync(async (req, res) => {
+    .delete(authenticate, authorize([3]), catchAsync(async (req, res) => {
         const postTypeId = req.params.id;
         await postTypeModel.deletePostType(postTypeId);
         res.json({ message: 'Typ příspěvku byl odstraněn' });

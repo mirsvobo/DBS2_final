@@ -2,32 +2,26 @@ const express = require('express');
 const router = express.Router();
 const UserPrivateMessageModel = require('../models/UserPrivateMessageModel');
 const catchAsync = require('../utils/catchAsync');
+const { validateUserPrivateMessage } = require('../middleware/userPrivateMessage-validation');
+const { authenticate, authorize } = require('../middleware/auth');
 
-const pool = require('../app.js');
+const pool = require('../app');
 const userPrivateMessageModel = new UserPrivateMessageModel(pool);
 
 router
     .route('/')
-    .post(catchAsync(async (req, res) => {
+    .post(authenticate, authorize([2, 3]), validateUserPrivateMessage, catchAsync(async (req, res) => {
         const userPrivateMessageData = req.body;
         const userPrivateMessageId = await userPrivateMessageModel.addUserPrivateMessage(userPrivateMessageData);
-        res.status(201).json({ message: 'Uživatelská zpráva byla přidána', userPrivateMessageId });
+        res.status(201).json({ message: 'Soukromá zpráva byla přiřazena', userPrivateMessageId });
     }));
 
 router
-    .route('/user/:userId')
-    .get(catchAsync(async (req, res) => {
-        const userId = req.params.userId;
-        const userPrivateMessages = await userPrivateMessageModel.getUserPrivateMessagesByUserId(userId);
-        res.json(userPrivateMessages);
-    }));
-
-router
-    .route('/')
-    .delete(catchAsync(async (req, res) => {
-        const userPrivateMessageId = req.body;
+    .route('/:id')
+    .delete(authenticate, authorize([3]), catchAsync(async (req, res) => {
+        const userPrivateMessageId = req.params.id;
         await userPrivateMessageModel.deleteUserPrivateMessage(userPrivateMessageId);
-        res.json({ message: 'Uživatelská zpráva byla odstraněna' });
+        res.json({ message: 'Soukromá zpráva byla odstraněna' });
     }));
 
 module.exports = router;

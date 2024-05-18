@@ -29,6 +29,7 @@ const PostTypeRoutes = require("./routes/postTypes");
 const PrivateMessagesRoutes = require("./routes/privateMessages");
 const ReportRoutes = require("./routes/reports");
 const UserPrivateMessageRoutes = require("./routes/userPrivateMessages");
+const AuthRoutes = require("./routes/auth");
 
 app.use("/users", UserRoutes);
 app.use("/posts", PostRoutes);
@@ -36,13 +37,14 @@ app.use("/dormitories", DormitoryRoutes);
 app.use("/comments", CommentRoutes);
 app.use("/permissions", PermissionRoutes);
 app.use("/universities", UniversityRoutes);
-app.use("/fieldOfStudy", FieldOfStudyRoutes);
+app.use("/fieldsOfStudy", FieldOfStudyRoutes);
 app.use("/likes", LikeRoutes);
 app.use("/postPostTypes", PostPostTypeRoutes);
 app.use("/postTypes", PostTypeRoutes);
 app.use("/privateMessages", PrivateMessagesRoutes);
 app.use("/reports", ReportRoutes);
 app.use("/userPrivateMessages", UserPrivateMessageRoutes);
+app.use("/auth", AuthRoutes);
 
 app.get('/', (req, res) => {
     res.send('Vítejte na naší API!');

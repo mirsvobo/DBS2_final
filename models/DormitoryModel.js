@@ -5,8 +5,8 @@ class DormitoryModel {
 
     async addDormitory(dormitoryData) {
         try {
-            const query = 'INSERT INTO Kolej (Adresa, Nazev) VALUES (ST_GeomFromText(?), ?)';
-            const [result] = await this.pool.query(query, [`POINT(${dormitoryData.latitude} ${dormitoryData.longitude})`, dormitoryData.Nazev]);
+            const query = 'INSERT INTO Kolej (Adresa, Nazev) VALUES (?, ?)';
+            const [result] = await this.pool.query(query, [dormitoryData.Adresa, dormitoryData.Nazev]);
             return result.insertId;
         } catch (error) {
             throw error;
@@ -15,7 +15,7 @@ class DormitoryModel {
 
     async getDormitoryById(dormitoryId) {
         try {
-            const [rows] = await this.pool.query('SELECT KolejID, ST_AsText(Adresa) as Adresa, Nazev FROM Kolej WHERE KolejID = ?', [dormitoryId]);
+            const [rows] = await this.pool.query('SELECT * FROM Kolej WHERE KolejID = ?', [dormitoryId]);
             return rows[0] || null;
         } catch (error) {
             throw error;
@@ -24,7 +24,7 @@ class DormitoryModel {
 
     async getAllDormitories() {
         try {
-            const [rows] = await this.pool.query('SELECT KolejID, ST_AsText(Adresa) as Adresa, Nazev FROM Kolej');
+            const [rows] = await this.pool.query('SELECT * FROM Kolej');
             return rows;
         } catch (error) {
             throw error;
@@ -33,8 +33,8 @@ class DormitoryModel {
 
     async updateDormitory(dormitoryId, newData) {
         try {
-            const query = 'UPDATE Kolej SET Adresa = ST_GeomFromText(?), Nazev = ? WHERE KolejID = ?';
-            await this.pool.query(query, [`POINT(${newData.latitude} ${newData.longitude})`, newData.Nazev, dormitoryId]);
+            const query = 'UPDATE Kolej SET Adresa = ?, Nazev = ? WHERE KolejID = ?';
+            await this.pool.query(query, [newData.Adresa, newData.Nazev, dormitoryId]);
             return true;
         } catch (error) {
             throw error;

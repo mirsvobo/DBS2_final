@@ -1,10 +1,13 @@
-const Joi = require('joi');
+const { createLikeSchema } = require('../schemas/like');
+const ExpressError = require('../utils/ExpressError');
 
-const createLikeSchema = Joi.object({
-    UzivatelID: Joi.number().integer().required(),
-    PrispevekID: Joi.number().integer().required()
-});
-
-module.exports = {
-    createLikeSchema
+module.exports.validateLike = (req, res, next) => {
+    const { error, value } = createLikeSchema.validate(req.body);
+    if (error) {
+        const message = error.details.map((e) => e.message).join(',');
+        throw new ExpressError(message, 400);
+    } else {
+        req.validatedLike = value;
+        next();
+    }
 };
