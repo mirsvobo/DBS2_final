@@ -1,37 +1,62 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hlavní stránka</title>
-    <link rel="stylesheet" href="/styles.css">
+    <title>University Forum</title>
+    <link rel="stylesheet" href="../public/styles.css">
+
 </head>
 <body>
-<header>
-    <h1>Univerzitní Fórum</h1>
-    <% if (user) { %>
-        <p>Vítejte, <%= user.username %>!</p>
-        <a href="/auth/logout">Odhlásit se</a>
-    <% } else { %>
-        <a href="/auth/login">Přihlásit se</a>
-        <a href="/auth/register">Registrovat se</a>
-    <% } %>
-</header>
-<main>
-    <h2>Poslední příspěvky</h2>
+<h1>Welcome to University Forum</h1>
+<% if (!user) { %>
+    <a href="/auth/login">Login</a> <a href="/auth/register">Register</a>
+<% } else { %>
+    <a href="/auth/logout">Logout</a>
+<% } %>
+
+<h2>Posts</h2>
+<ul>
     <% posts.forEach(post => { %>
-        <article>
-            <h3><%= post.title %></h3>
-            <p><%= post.content %></p>
-            <p>Autor: <%= post.author %> | Datum: <%= post.date %></p>
-            <% if (user && (user.id === post.userId || user.role === 3)) { %>
-                <a href="/posts/<%= post.id %>/edit">Upravit</a>
-                <form action="/posts/<%= post.id %>?_method=DELETE" method="POST">
-                    <button type="submit">Smazat</button>
+        <li>
+            <h3><a href="/posts/<%= post.PrispevekID %>"><%= post.Titulek %></a></h3>
+            <p><%= post.Obsah_prispevku.substring(0, 100) %>...</p>
+            <p>Posted by <%= post.Jmeno %> <%= post.Prijmeni %> on <%= new Date(post.Cas_odeslani).toLocaleString() %></p>
+
+            <% if (user) { %>
+                <form action="/likes/<%= post.PrispevekID %>" method="POST">
+                    <button type="submit">Like</button>
                 </form>
+
+                <a href="/comments/new/<%= post.PrispevekID %>">Comment</a>
+
+                <% if (user.UzivatelID === post.UzivatelID || user.OpravneniID === 3) { %>
+                    <a href="/posts/edit/<%= post.PrispevekID %>">Edit</a>
+                    <form action="/posts/<%= post.PrispevekID %>" method="POST" style="display:inline;">
+                        <input type="hidden" name="_method" value="DELETE">
+                        <button type="submit">Delete</button>
+                    </form>
+                <% } %>
             <% } %>
-        </article>
-    <% }) %>
-</main>
+        </li>
+    <% }); %>
+</ul>
+
+<% if (user) { %>
+    <h2>Create New Post</h2>
+    <form action="/posts" method="POST">
+        <input type="text" name="Titulek" placeholder="Title" required>
+        <textarea name="Obsah_prispevku" placeholder="Content" required></textarea>
+        <select name="Typ_prispevku" required>
+            <option value="1">Spolujízda</option>
+            <option value="2">Spolubydlení</option>
+            <option value="3">Seznámení</option>
+            <option value="4">Obecná nabídka</option>
+            <option value="5">Obecná poptávka</option>
+            <option value="6">Daruji</option>
+            <option value="7">Sport</option>
+        </select>
+        <button type="submit">Create</button>
+    </form>
+<% } %>
 </body>
 </html>

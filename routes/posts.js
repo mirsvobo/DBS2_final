@@ -1,43 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const PostModel = require('../models/PostModel');
-const catchAsync = require('../utils/catchAsync');
-const { authenticate, authorize } = require('../middleware/auth');
-const { validatePost } = require('../middleware/post-validation');
+const {
+    getAllPosts,
+    createPost,
+    getPostById,
+    updatePost,
+    deletePost
+} = require('../controllers/PostController');
+const { isLoggedIn, isAuthorOrAdmin } = require('../middleware/auth');
 
-const pool = require('../db.js');
-const postModel = new PostModel(pool);
+// Definice cesty pro získání všech příspěvků
+router.get('/', getAllPosts);
 
-router
-    .route('/')
-    .post(authenticate, authorize([2, 3]), validatePost, catchAsync(async (req, res) => {
-        const postData = req.body;
-        postData.userId = req.user.id;
-        const postId = await postModel.addPost(postData);
-        res.status(201).json({ message: 'Příspěvek byl vytvořen', postId });
-    }));
+// Definice cesty pro vytvoření nového příspěvku
+router.post('/', isLoggedIn, createPost);
 
-router
-    .route('/:id')
-    .get(catchAsync(async (req, res) => {
-        const postId = req.params.id;
-        const post = await postModel.getPostById(postId);
-        if (post) {
-            res.json(post);
-        } else {
-            res.status(404).json({ message: 'Příspěvek nenalezen' });
-        }
-    }))
-    .put(authenticate, authorize([2, 3]), validatePost, catchAsync(async (req, res) => {
-        const postId = req.params.id;
-        const newData = req.body;
-        await postModel.updatePost(postId, newData);
-        res.json({ message: 'Příspěvek byl aktualizován' });
-    }))
-    .delete(authenticate, authorize([3]), catchAsync(async (req, res) => { // pouze admin
-        const postId = req.params.id;
-        await postModel.deletePost(postId);
-        res.json({ message: 'Příspěvek byl odstraněn' });
-    }));
+// Definice cesty pro získání jednoho příspěvku podle ID
+router.get('/:id', getPostById);
+
+// Definice cesty pro aktualizaci příspěvku
+router.put('/:id', isLoggedIn, isAuthorOrAdmin, updatePost);
+
+// Definice cesty pro smazání příspěvku
+router.delete('/:id', isLoggedIn, isAuthorOrAdmin, deletePost);
 
 module.exports = router;

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= post.Titulek %></title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<h1><%= post.Titulek %></h1>
+<% if (post.Obrazek) { %>
+    <img src="data:image/jpeg;base64,<%= post.Obrazek.toString('base64') %>" alt="Post Image" style="max-width: 600px;">
+<% } %>
+<p><%= post.Obsah_prispevku %></p>
+<p>Posted by <%= post.Jmeno %> <%= post.Prijmeni %> on <%= new Date(post.Cas_odeslani).toLocaleString() %></p>
+<p>Type: <a href="/posts/type/<%= post.Typ_prispevku %>"><%= post.Typ %></a></p>
+<a href="/">Back to home</a>
+</body>
+</html>

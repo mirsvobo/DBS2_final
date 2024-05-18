@@ -4,7 +4,8 @@ const dotenv = require('dotenv');
 const path = require('path');
 const session = require('express-session');
 const morgan = require('morgan');
-const logger = require('./logger');
+const { createLogger, transports, format } = require('winston');
+const pool = require('./db'); // Import poolu z db.js
 
 dotenv.config();
 
@@ -27,10 +28,20 @@ app.use(session({
     cookie: { secure: false } // Nastavte na true v produkčním prostředí s HTTPS
 }));
 
-// Použití morgan pro logování HTTP požadavků
-app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
+// Logger
+const logger = createLogger({
+    level: 'info',
+    format: format.combine(
+        format.timestamp(),
+        format.printf(({ timestamp, level, message }) => `${timestamp} [${level}]: ${message}`)
+    ),
+    transports: [
+        new transports.Console(),
+        new transports.File({ filename: 'combined.log' })
+    ]
+});
 
-const pool = require('./db');
+app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 
 // Import routerů
 const UserRoutes = require('./routes/users');
@@ -64,27 +75,23 @@ app.use('/reports', ReportRoutes);
 app.use('/userPrivateMessages', UserPrivateMessageRoutes);
 app.use('/auth', AuthRoutes);
 
-// Přidání cesty pro hlavní stránku
+// Domovská stránka
 const PostModel = require('./models/PostModel');
-const postModel = new PostModel();
+const postModel = new PostModel(pool);
 
 app.get('/', async (req, res) => {
     try {
         const posts = await postModel.getAllPosts();
         res.render('index', { user: req.session.user, posts });
     } catch (error) {
-        logger.error(error.stack);
+        logger.error(error.message);
         res.status(500).json({ message: error.message });
     }
-});
-
-// Middleware pro zpracování chyb
-app.use((err, req, res, next) => {
-    logger.error(err.stack);
-    res.status(500).send('Něco se pokazilo!');
 });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     logger.info(`Server běží na portu ${port}`);
 });
+
+module.exports = pool;

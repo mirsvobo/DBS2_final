@@ -1,6 +1,6 @@
 const { verifyToken } = require('../utils/auth');
 const UserModel = require('../models/UserModel');
-const pool = require('../app');
+const pool = require('../db');
 
 const userModel = new UserModel(pool);
 
@@ -34,7 +34,26 @@ const authorize = (roles) => {
     };
 };
 
+const isLoggedIn = (req, res, next) => {
+    if (!req.session.user) {
+        return res.redirect('/auth/login');
+    }
+    next();
+};
+
+const isAuthorOrAdmin = async (req, res, next) => {
+    const postId = req.params.id;
+    const userId = req.session.user.UzivatelID;
+    const post = await postModel.getPostById(postId);
+    if (post.UzivatelID !== userId && req.session.user.OpravneniID !== 3) {
+        return res.redirect('/');
+    }
+    next();
+};
+
 module.exports = {
     authenticate,
-    authorize
+    authorize,
+    isLoggedIn,
+    isAuthorOrAdmin
 };

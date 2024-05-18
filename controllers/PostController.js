@@ -1,0 +1,67 @@
+const PostModel = require('../models/PostModel');
+const pool = require('../db'); // Import poolu z db.js
+
+const postModel = new PostModel(pool);
+
+const getAllPosts = async (req, res) => {
+    try {
+        const posts = await postModel.getAllPosts();
+        res.json(posts);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const createPost = async (req, res) => {
+    const { Titulek, Obsah_prispevku, Typ_prispevku } = req.body;
+    const UzivatelID = req.session.user.UzivatelID;
+    try {
+        const newPostId = await postModel.createPost({ Titulek, Obsah_prispevku, Typ_prispevku, UzivatelID });
+        res.status(201).json({ message: 'Příspěvek byl vytvořen', newPostId });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getPostById = async (req, res) => {
+    const postId = req.params.id;
+    try {
+        const post = await postModel.getPostById(postId);
+        if (post) {
+            res.json(post);
+        } else {
+            res.status(404).json({ message: 'Příspěvek nenalezen' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const updatePost = async (req, res) => {
+    const postId = req.params.id;
+    const { Titulek, Obsah_prispevku, Typ_prispevku } = req.body;
+    try {
+        await postModel.updatePost(postId, { Titulek, Obsah_prispevku, Typ_prispevku });
+        res.json({ message: 'Příspěvek byl aktualizován' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const deletePost = async (req, res) => {
+    const postId = req.params.id;
+    try {
+        await postModel.deletePost(postId);
+        res.json({ message: 'Příspěvek byl odstraněn' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = {
+    getAllPosts,
+    createPost,
+    getPostById,
+    updatePost,
+    deletePost
+};

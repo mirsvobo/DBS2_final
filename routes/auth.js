@@ -1,18 +1,19 @@
 const express = require('express');
-const UserModel = require('../models/UserModel');
 const AuthController = require('../controllers/AuthController');
-const catchAsync = require('../utils/catchAsync');
+const authController = new AuthController();
 
 const router = express.Router();
-const userModel = new UserModel();
-const authController = new AuthController(userModel);
 
-router.route('/register')
-    .get(authController.renderRegister.bind(authController))
-    .post(catchAsync(authController.register.bind(authController)));
+router.get('/register', (req, res) => {
+    res.render('register');
+});
 
-router.route('/login')
-    .get(authController.renderLogin.bind(authController))
-    .post(catchAsync(authController.login.bind(authController)));
+router.post('/register', authController.register.bind(authController));
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+
+router.post('/login', authController.login.bind(authController));
+router.post('/logout', authController.logout.bind(authController));
 
 module.exports = router;

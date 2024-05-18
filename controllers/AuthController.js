@@ -1,14 +1,11 @@
-const UserModel = require('../models/UserModel');
 const bcrypt = require('bcrypt');
-const logger = require('../logger');
+const jwt = require('jsonwebtoken');
+const UserModel = require('../models/UserModel');
+const pool = require('../db');
 
 class AuthController {
-    constructor(userModel) {
-        this.userModel = userModel;
-    }
-
-    renderRegister(req, res) {
-        res.render('register');
+    constructor() {
+        this.userModel = new UserModel(pool);
     }
 
     async register(req, res) {
@@ -23,33 +20,44 @@ class AuthController {
                 Prijmeni: lastName,
                 OpravneniID: 2 // Předpokládáme, že 2 je role registrovaného uživatele
             };
-            const userId = await this.userModel.addUser(userData);
-            req.session.user = { id: userId, username, role: 2 };
+            await this.userModel.addUser(userData);
             res.redirect('/');
         } catch (error) {
-            logger.error(`Error in AuthController.register: ${error.message}`);
             res.status(500).json({ message: error.message });
         }
-    }
-
-    renderLogin(req, res) {
-        res.render('login');
     }
 
     async login(req, res) {
         const { username, password } = req.body;
         try {
             const user = await this.userModel.getUserByUsername(username);
-            if (user && await bcrypt.compare(password, user.Password)) {
-                req.session.user = { id: user.UzivatelID, username: user.Username, role: user.OpravneniID };
-                res.redirect('/');
-            } else {
-                res.status(401).json({ message: 'Invalid credentials' });
+            if (!user) {
+                return res.status(401).json({ message: 'Invalid credentials' });
             }
+
+            const isMatch = await bcrypt.compare(password, user.Password);
+            console.log('Porovnání hesel:', isMatch);
+            console.log('Zadané heslo:', password);
+            console.log('Hashované heslo z databáze:', user.Password);
+
+            if (!isMatch) {
+                return res.status(401).json({ message: 'Invalid credentials' });
+            }
+
+            req.session.user = user;
+            res.redirect('/');
         } catch (error) {
-            logger.error(`Error in AuthController.login: ${error.message}`);
             res.status(500).json({ message: error.message });
         }
+    }
+
+    logout(req, res) {
+        req.session.destroy((err) => {
+            if (err) {
+                return res.status(500).json({ message: 'Failed to log out' });
+            }
+            res.redirect('/auth/login');
+        });
     }
 }
 
