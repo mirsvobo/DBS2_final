@@ -6,7 +6,13 @@ class PermissionModel {
     async addPermission(permissionData) {
         try {
             const query = 'INSERT INTO Opravneni (Moderator, Povoleni_hlaseni, Povoleni_komentare, Povoleni_prispevky, Povoleni_zpravy) VALUES (?, ?, ?, ?, ?)';
-            const [result] = await this.pool.query(query, [permissionData.Moderator, permissionData.Povoleni_hlaseni, permissionData.Povoleni_komentare, permissionData.Povoleni_prispevky, permissionData.Povoleni_zpravy]);
+            const [result] = await this.pool.query(query, [
+                permissionData.Moderator,
+                permissionData.Povoleni_hlaseni,
+                permissionData.Povoleni_komentare,
+                permissionData.Povoleni_prispevky,
+                permissionData.Povoleni_zpravy
+            ]);
             return result.insertId;
         } catch (error) {
             throw error;
@@ -34,7 +40,14 @@ class PermissionModel {
     async updatePermission(permissionId, newData) {
         try {
             const query = 'UPDATE Opravneni SET Moderator = ?, Povoleni_hlaseni = ?, Povoleni_komentare = ?, Povoleni_prispevky = ?, Povoleni_zpravy = ? WHERE OpravneniID = ?';
-            await this.pool.query(query, [newData.Moderator, newData.Povoleni_hlaseni, newData.Povoleni_komentare, newData.Povoleni_prispevky, newData.Povoleni_zpravy, permissionId]);
+            await this.pool.query(query, [
+                newData.Moderator,
+                newData.Povoleni_hlaseni,
+                newData.Povoleni_komentare,
+                newData.Povoleni_prispevky,
+                newData.Povoleni_zpravy,
+                permissionId
+            ]);
             return true;
         } catch (error) {
             throw error;
