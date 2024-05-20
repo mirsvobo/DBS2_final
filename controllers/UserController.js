@@ -15,7 +15,7 @@ class UserController {
                 Password: hashedPassword,
                 Jmeno: firstName,
                 Prijmeni: lastName,
-                OpravneniID: 2 // Předpokládáme, že 2 je role registrovaného uživatele
+                OpravneniID: 2
             };
             const userId = await this.userModel.addUser(userData);
             req.session.user = { id: userId, username, role: 2 };

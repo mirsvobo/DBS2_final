@@ -18,7 +18,7 @@ class AuthController {
                 Password: hashedPassword,
                 Jmeno: firstName,
                 Prijmeni: lastName,
-                OpravneniID: 2 // Předpokládáme, že 2 je role registrovaného uživatele
+                OpravneniID: 2
             };
             await this.userModel.addUser(userData);
             res.redirect('/');
