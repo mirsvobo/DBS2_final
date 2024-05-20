@@ -4,6 +4,7 @@ const {
     getAllPosts,
     createPost,
     getPostById,
+    getEditPost,
     updatePost,
     deletePost
 } = require('../controllers/PostController');
@@ -21,7 +22,8 @@ router.post('/', isLoggedIn, createPost);
 // Definice cesty pro získání jednoho příspěvku podle ID
 router.get('/:id', getPostById);
 
-// Definice cesty pro aktualizaci příspěvku
+// Definice cesty pro úpravu příspěvku
+router.get('/:id/edit', isLoggedIn, isAuthorOrAdmin, getEditPost);
 router.put('/:id', isLoggedIn, isAuthorOrAdmin, updatePost);
 
 // Definice cesty pro smazání příspěvku

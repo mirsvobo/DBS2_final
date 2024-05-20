@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const session = require('express-session');
 const morgan = require('morgan');
+const methodOverride = require('method-override'); // Přidání method-override
 const { createLogger, transports, format } = require('winston');
 const pool = require('./db'); // Import poolu z db.js
 
@@ -18,7 +19,8 @@ app.set('views', path.join(__dirname, 'views'));
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public'))); // Toto je důležité
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method')); // Použití method-override
 
 // Nastavení session
 app.use(session({

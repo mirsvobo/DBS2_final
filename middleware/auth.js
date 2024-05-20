@@ -1,8 +1,10 @@
 const { verifyToken } = require('../utils/auth');
 const UserModel = require('../models/UserModel');
-const pool = require('../db');
+const PostModel = require('../models/PostModel'); // Import PostModel
+const pool = require('../db'); // Import poolu
 
 const userModel = new UserModel(pool);
+const postModel = new PostModel(pool); // Inicializace postModel
 
 const authenticate = async (req, res, next) => {
     const token = req.headers['authorization'];

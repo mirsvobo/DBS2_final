@@ -19,7 +19,7 @@ const createPost = async (req, res) => {
     const UzivatelID = req.session.user.UzivatelID;
     try {
         const newPostId = await postModel.createPost({ Titulek, Obsah_prispevku, Typ_prispevku, UzivatelID });
-        res.status(201).json({ message: 'Příspěvek byl vytvořen', newPostId });
+        res.redirect('/');
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -40,12 +40,26 @@ const getPostById = async (req, res) => {
     }
 };
 
+const getEditPost = async (req, res) => {
+    const postId = req.params.id;
+    try {
+        const post = await postModel.getPostById(postId);
+        if (post) {
+            res.render('editPost', { user: req.session.user, post });
+        } else {
+            res.status(404).json({ message: 'Příspěvek nenalezen' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 const updatePost = async (req, res) => {
     const postId = req.params.id;
     const { Titulek, Obsah_prispevku, Typ_prispevku } = req.body;
     try {
         await postModel.updatePost(postId, { Titulek, Obsah_prispevku, Typ_prispevku });
-        res.json({ message: 'Příspěvek byl aktualizován' });
+        res.redirect(`/posts/${postId}`);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -55,7 +69,7 @@ const deletePost = async (req, res) => {
     const postId = req.params.id;
     try {
         await postModel.deletePost(postId);
-        res.json({ message: 'Příspěvek byl odstraněn' });
+        res.redirect('/');
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -65,6 +79,7 @@ module.exports = {
     getAllPosts,
     createPost,
     getPostById,
+    getEditPost,
     updatePost,
     deletePost
 };
