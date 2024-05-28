@@ -58,6 +58,7 @@ const updatePost = async (req, res) => {
 const deletePost = async (req, res) => {
     const postId = req.params.id;
     try {
+        await commentModel.deleteCommentsByPostId(postId); // Přidáno
         await postModel.deletePost(postId);
         res.redirect('/');
     } catch (error) {
@@ -67,7 +68,7 @@ const deletePost = async (req, res) => {
 
 module.exports = {
     getAllPosts,
-    showCreatePostForm, // Přidáno
+    showCreatePostForm,
     createPost,
     getPostById,
     updatePost,

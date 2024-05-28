@@ -6,19 +6,14 @@ class CommentModel {
     }
 
     async getCommentsByPostId(postId) {
-        const [rows] = await this.pool.query('SELECT k.*, u.Jmeno, u.Prijmeni FROM Komentar k JOIN Uzivatel u ON k.UzivatelID = u.UzivatelID WHERE k.PrispevekID = ?', [postId]);
+        const [rows] = await this.pool.query('SELECT * FROM Komentar WHERE PrispevekID = ?', [postId]);
         return rows;
     }
 
     async createComment(commentData) {
-        const { Obsah_komentare, UzivatelID, PrispevekID } = commentData;
-        const [result] = await this.pool.query('INSERT INTO Komentar (Obsah_komentare, UzivatelID, PrispevekID, Cas_odeslani) VALUES (?, ?, ?, NOW())', [Obsah_komentare, UzivatelID, PrispevekID]);
+        const { Obsah_komentare, PrispevekID, UzivatelID } = commentData;
+        const [result] = await this.pool.query('INSERT INTO Komentar (Obsah_komentare, PrispevekID, UzivatelID, Cas_odeslani) VALUES (?, ?, ?, NOW())', [Obsah_komentare, PrispevekID, UzivatelID]);
         return result.insertId;
-    }
-
-    async getCommentById(commentId) {
-        const [rows] = await this.pool.query('SELECT k.*, u.Jmeno, u.Prijmeni FROM Komentar k JOIN Uzivatel u ON k.UzivatelID = u.UzivatelID WHERE k.KomentarID = ?', [commentId]);
-        return rows[0];
     }
 
     async updateComment(commentId, commentData) {
@@ -28,6 +23,10 @@ class CommentModel {
 
     async deleteComment(commentId) {
         await this.pool.query('DELETE FROM Komentar WHERE KomentarID = ?', [commentId]);
+    }
+
+    async deleteCommentsByPostId(postId) { // Přidáno
+        await this.pool.query('DELETE FROM Komentar WHERE PrispevekID = ?', [postId]);
     }
 }
 
