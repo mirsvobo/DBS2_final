@@ -1,25 +1,21 @@
 const CommentModel = require('../models/CommentModel');
-const pool = require('../db'); // Import poolu z db.js
+const PostModel = require('../models/PostModel'); // Přidáme import modelu pro příspěvky
+const pool = require('../db');
 
 const commentModel = new CommentModel(pool);
-
-const getAllComments = async (req, res) => {
-    const postId = req.params.postId;
-    try {
-        const comments = await commentModel.getCommentsByPostId(postId);
-        res.json(comments);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+const postModel = new PostModel(pool); // Vytvoříme instanci modelu pro příspěvky
 
 const createComment = async (req, res) => {
     const postId = req.params.postId;
     const { Obsah_komentare } = req.body;
     const UzivatelID = req.session.user.UzivatelID;
     try {
-        const newCommentId = await commentModel.createComment({ Obsah_komentare, PrispevekID: postId, UzivatelID });
-        res.status(201).redirect(`/posts/${postId}`); // Přesměrování na detail příspěvku po vytvoření komentáře
+        const post = await postModel.getPostById(postId); // Zkontrolujeme, zda příspěvek existuje
+        if (!post) {
+            return res.status(404).json({ message: 'Příspěvek nenalezen' });
+        }
+        await commentModel.createComment({ Obsah_komentare, UzivatelID, PrispevekID: postId });
+        res.redirect(`/posts/${postId}`);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -27,10 +23,15 @@ const createComment = async (req, res) => {
 
 const getCommentById = async (req, res) => {
     const commentId = req.params.commentId;
+    const postId = req.params.postId; // Přidáme získání postId z parametru
     try {
+        const post = await postModel.getPostById(postId); // Zkontrolujeme, zda příspěvek existuje
+        if (!post) {
+            return res.status(404).json({ message: 'Příspěvek nenalezen' });
+        }
         const comment = await commentModel.getCommentById(commentId);
         if (comment) {
-            res.json(comment);
+            res.render('editComment', { comment, user: req.session.user, postId }); // Předáme postId do šablony
         } else {
             res.status(404).json({ message: 'Komentář nenalezen' });
         }
@@ -41,10 +42,15 @@ const getCommentById = async (req, res) => {
 
 const updateComment = async (req, res) => {
     const commentId = req.params.commentId;
+    const postId = req.params.postId; // Přidáme získání postId z parametru
     const { Obsah_komentare } = req.body;
     try {
+        const post = await postModel.getPostById(postId); // Zkontrolujeme, zda příspěvek existuje
+        if (!post) {
+            return res.status(404).json({ message: 'Příspěvek nenalezen' });
+        }
         await commentModel.updateComment(commentId, { Obsah_komentare });
-        res.json({ message: 'Komentář byl aktualizován' });
+        res.redirect(`/posts/${postId}`);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -52,16 +58,20 @@ const updateComment = async (req, res) => {
 
 const deleteComment = async (req, res) => {
     const commentId = req.params.commentId;
+    const postId = req.params.postId; // Přidáme získání postId z parametru
     try {
+        const post = await postModel.getPostById(postId); // Zkontrolujeme, zda příspěvek existuje
+        if (!post) {
+            return res.status(404).json({ message: 'Příspěvek nenalezen' });
+        }
         await commentModel.deleteComment(commentId);
-        res.json({ message: 'Komentář byl odstraněn' });
+        res.redirect(`/posts/${postId}`);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
 module.exports = {
-    getAllComments,
     createComment,
     getCommentById,
     updateComment,

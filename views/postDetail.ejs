@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail příspěvku</title>
+    <title><%= post.Titulek %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
 </head>
@@ -43,9 +43,9 @@
     <p><%= post.Obsah_prispevku %></p>
     <p><small>Autor: <%= post.Jmeno %> <%= post.Prijmeni %>, Datum: <%= post.Cas_odeslani %></small></p>
 
-    <% if (user && (user.UzivatelID === post.UzivatelID || user.OpravneniID === 3)) { %>
-        <a href="/posts/<%= post.PrispevekID %>/edit" class="btn btn-primary">Upravit</a>
-        <form action="/posts/<%= post.PrispevekID %>?_method=DELETE" method="POST" class="d-inline">
+    <% if (user && (post.UzivatelID === user.UzivatelID || user.OpravneniID === 3)) { %>
+        <a href="/posts/<%= post.PrispevekID %>/edit" class="btn btn-warning">Upravit</a>
+        <form action="/posts/<%= post.PrispevekID %>?_method=DELETE" method="POST" style="display:inline;">
             <button type="submit" class="btn btn-danger">Smazat</button>
         </form>
     <% } %>
@@ -56,9 +56,9 @@
             <div class="list-group-item">
                 <p><%= comment.Obsah_komentare %></p>
                 <p><small>Autor: <%= comment.Jmeno %> <%= comment.Prijmeni %>, Datum: <%= comment.Cas_odeslani %></small></p>
-                <% if (user && (user.UzivatelID === comment.UzivatelID || user.OpravneniID === 3)) { %>
-                    <a href="/comments/<%= comment.KomentarID %>/edit" class="btn btn-primary btn-sm">Upravit</a>
-                    <form action="/comments/<%= comment.KomentarID %>?_method=DELETE" method="POST" class="d-inline">
+                <% if (user && (comment.UzivatelID === user.UzivatelID || user.OpravneniID === 3)) { %>
+                    <a href="/posts/<%= post.PrispevekID %>/comments/<%= comment.KomentarID %>/edit" class="btn btn-warning btn-sm">Upravit</a>
+                    <form action="/posts/<%= post.PrispevekID %>/comments/<%= comment.KomentarID %>?_method=DELETE" method="POST" style="display:inline;">
                         <button type="submit" class="btn btn-danger btn-sm">Smazat</button>
                     </form>
                 <% } %>
@@ -67,11 +67,11 @@
     </div>
 
     <% if (user) { %>
-        <h4>Přidat nový komentář</h4>
+        <h4>Přidat komentář</h4>
         <form action="/posts/<%= post.PrispevekID %>/comments" method="POST">
             <div class="mb-3">
                 <label for="Obsah_komentare" class="form-label">Komentář</label>
-                <textarea class="form-control" id="Obsah_komentare" name="Obsah_komentare" rows="3" required></textarea>
+                <textarea id="Obsah_komentare" name="Obsah_komentare" class="form-control" required></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Přidat komentář</button>
         </form>

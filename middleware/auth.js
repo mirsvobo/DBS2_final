@@ -1,10 +1,10 @@
 const { verifyToken } = require('../utils/auth');
 const UserModel = require('../models/UserModel');
-const PostModel = require('../models/PostModel'); // Import PostModel
-const pool = require('../db'); // Import poolu
+const PostModel = require('../models/PostModel');
+const pool = require('../db');
 
 const userModel = new UserModel(pool);
-const postModel = new PostModel(pool); // Inicializace postModel
+const postModel = new PostModel(pool);
 
 const authenticate = async (req, res, next) => {
     const token = req.headers['authorization'];
@@ -46,11 +46,18 @@ const isLoggedIn = (req, res, next) => {
 const isAuthorOrAdmin = async (req, res, next) => {
     const postId = req.params.id;
     const userId = req.session.user.UzivatelID;
-    const post = await postModel.getPostById(postId);
-    if (post.UzivatelID !== userId && req.session.user.OpravneniID !== 3) {
-        return res.redirect('/');
+    try {
+        const post = await postModel.getPostById(postId);
+        if (!post) {
+            return res.status(404).json({ message: 'Příspěvek nenalezen' });
+        }
+        if (post.UzivatelID !== userId && req.session.user.OpravneniID !== 3) {
+            return res.status(403).json({ message: 'Nemáte oprávnění k úpravě tohoto příspěvku' });
+        }
+        next();
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
-    next();
 };
 
 module.exports = {

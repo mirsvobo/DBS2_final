@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const session = require('express-session');
 const morgan = require('morgan');
+const methodOverride = require('method-override');
 const { createLogger, transports, format } = require('winston');
 const pool = require('./db'); // Import poolu z db.js
 
@@ -19,6 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(methodOverride('_method'));
 
 // Nastavení session
 app.use(session({
@@ -47,7 +49,7 @@ app.use(morgan('combined', { stream: { write: message => logger.info(message.tri
 const UserRoutes = require('./routes/users');
 const PostRoutes = require('./routes/posts');
 const DormitoryRoutes = require('./routes/dormitories');
-const CommentRoutes = require('./routes/comments'); // Přidáno správně
+const CommentRoutes = require('./routes/comments');
 const PermissionRoutes = require('./routes/permissions');
 const UniversityRoutes = require('./routes/universities');
 const FieldOfStudyRoutes = require('./routes/fieldOfStudy');
@@ -63,7 +65,7 @@ const AuthRoutes = require('./routes/auth');
 app.use('/users', UserRoutes);
 app.use('/posts', PostRoutes);
 app.use('/dormitories', DormitoryRoutes);
-app.use(CommentRoutes); // Opraveno
+app.use('/comments', CommentRoutes);
 app.use('/permissions', PermissionRoutes);
 app.use('/universities', UniversityRoutes);
 app.use('/fieldsOfStudy', FieldOfStudyRoutes);

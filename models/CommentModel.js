@@ -11,8 +11,8 @@ class CommentModel {
     }
 
     async createComment(commentData) {
-        const { Obsah_komentare, PrispevekID, UzivatelID } = commentData;
-        const [result] = await this.pool.query('INSERT INTO Komentar (Obsah_komentare, PrispevekID, UzivatelID, Cas_odeslani) VALUES (?, ?, ?, NOW())', [Obsah_komentare, PrispevekID, UzivatelID]);
+        const { Obsah_komentare, UzivatelID, PrispevekID } = commentData;
+        const [result] = await this.pool.query('INSERT INTO Komentar (Obsah_komentare, UzivatelID, PrispevekID, Cas_odeslani) VALUES (?, ?, ?, NOW())', [Obsah_komentare, UzivatelID, PrispevekID]);
         return result.insertId;
     }
 

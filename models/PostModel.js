@@ -1,5 +1,3 @@
-const pool = require('../db');
-
 class PostModel {
     constructor(pool) {
         this.pool = pool;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nový příspěvek</title>
+    <title>Vytvořit nový příspěvek</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
 </head>
@@ -39,28 +39,29 @@
     </div>
 </nav>
 <div class="container mt-4">
-    <h2>Nový příspěvek</h2>
+    <h2>Vytvořit nový příspěvek</h2>
     <form action="/posts" method="POST">
         <div class="mb-3">
             <label for="Titulek" class="form-label">Titulek</label>
-            <input type="text" class="form-control" id="Titulek" name="Titulek" required>
+            <input type="text" id="Titulek" name="Titulek" class="form-control" required>
         </div>
         <div class="mb-3">
             <label for="Obsah_prispevku" class="form-label">Obsah příspěvku</label>
-            <textarea class="form-control" id="Obsah_prispevku" name="Obsah_prispevku" rows="5" required></textarea>
+            <textarea id="Obsah_prispevku" name="Obsah_prispevku" class="form-control" required></textarea>
         </div>
         <div class="mb-3">
             <label for="Typ_prispevku" class="form-label">Typ příspěvku</label>
-            <select class="form-select" id="Typ_prispevku" name="Typ_prispevku" required>
+            <select id="Typ_prispevku" name="Typ_prispevku" class="form-select" required>
                 <option value="1">Spolujízda</option>
                 <option value="2">Spolubydlení</option>
                 <option value="3">Seznámení</option>
                 <option value="4">Obecná nabídka</option>
                 <option value="5">Obecná poptávka</option>
                 <option value="6">Daruji</option>
+                <option value="7">Sport</option>
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Odeslat</button>
+        <button type="submit" class="btn btn-primary">Vytvořit příspěvek</button>
     </form>
 </div>
 <footer class="bg-dark text-white text-center py-3 mt-4">

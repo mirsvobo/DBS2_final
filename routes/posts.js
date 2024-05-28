@@ -4,29 +4,30 @@ const {
     getAllPosts,
     createPost,
     getPostById,
-    getEditPost,
     updatePost,
-    deletePost
+    deletePost,
+    showCreatePostForm
 } = require('../controllers/PostController');
+const {
+    createComment,
+    updateComment,
+    deleteComment,
+    getCommentById
+} = require('../controllers/CommentController');
 const { isLoggedIn, isAuthorOrAdmin } = require('../middleware/auth');
 
-// Definice cesty pro získání všech příspěvků
+// Příspěvky
 router.get('/', getAllPosts);
-
-// Definice cesty pro vytvoření nového příspěvku
-router.get('/new', isLoggedIn, (req, res) => {
-    res.render('newPost', { user: req.session.user });
-});
+router.get('/new', isLoggedIn, showCreatePostForm); // Přidáno
 router.post('/', isLoggedIn, createPost);
-
-// Definice cesty pro získání jednoho příspěvku podle ID
 router.get('/:id', getPostById);
-
-// Definice cesty pro úpravu příspěvku
-router.get('/:id/edit', isLoggedIn, isAuthorOrAdmin, getEditPost);
 router.put('/:id', isLoggedIn, isAuthorOrAdmin, updatePost);
-
-// Definice cesty pro smazání příspěvku
 router.delete('/:id', isLoggedIn, isAuthorOrAdmin, deletePost);
+
+// Komentáře
+router.post('/:postId/comments', isLoggedIn, createComment);
+router.get('/:postId/comments/:commentId/edit', isLoggedIn, getCommentById);
+router.put('/:postId/comments/:commentId', isLoggedIn, updateComment);
+router.delete('/:postId/comments/:commentId', isLoggedIn, deleteComment);
 
 module.exports = router;

@@ -40,10 +40,10 @@
 </nav>
 <div class="container mt-4">
     <h2>Upravit komentář</h2>
-    <form action="/comments/<%= comment.KomentarID %>?_method=PUT" method="POST">
+    <form action="/posts/<%= postId %>/comments/<%= comment.KomentarID %>?_method=PUT" method="POST">
         <div class="mb-3">
             <label for="Obsah_komentare" class="form-label">Komentář</label>
-            <textarea class="form-control" id="Obsah_komentare" name="Obsah_komentare" rows="3" required><%= comment.Obsah_komentare %></textarea>
+            <textarea id="Obsah_komentare" name="Obsah_komentare" class="form-control" required><%= comment.Obsah_komentare %></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Upravit komentář</button>
     </form>
