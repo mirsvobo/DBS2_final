@@ -1,76 +1,41 @@
-const bcrypt = require('bcrypt');
+const pool = require('../db');
 
 class UserModel {
     constructor(pool) {
         this.pool = pool;
     }
 
-    // Přidání nového uživatele
     async addUser(userData) {
-        try {
-            const { Username, Email, Password, Jmeno, Prijmeni, OpravneniID } = userData;
-            const query = 'INSERT INTO Uzivatel (Username, Email, Password, Jmeno, Prijmeni, OpravneniID) VALUES (?, ?, ?, ?, ?, ?)';
-            const [result] = await this.pool.query(query, [Username, Email, Password, Jmeno, Prijmeni, OpravneniID]);
-            return result.insertId;
-        } catch (error) {
-            throw error;
-        }
+        const [result] = await this.pool.query('INSERT INTO Uzivatel SET ?', [userData]);
+        return result.insertId;
     }
 
-    // Získání uživatele podle uživatelského jména
-    async getUserByUsername(username) {
-        try {
-            const [rows] = await this.pool.query('SELECT * FROM Uzivatel WHERE Username = ?', [username]);
-            return rows[0];
-        } catch (error) {
-            throw error;
-        }
+    async getAllUsers() {
+        const [rows] = await this.pool.query('SELECT * FROM Uzivatel');
+        return rows;
     }
 
-    // Získání uživatele podle ID
     async getUserById(userId) {
-        try {
-            const [rows] = await this.pool.query('SELECT * FROM Uzivatel WHERE UzivatelID = ?', [userId]);
-            return rows[0] || null;
-        } catch (error) {
-            throw error;
-        }
+        const [rows] = await this.pool.query('SELECT * FROM Uzivatel WHERE UzivatelID = ?', [userId]);
+        return rows[0];
     }
 
-    // Aktualizace uživatele
-    async updateUser(userId, newData) {
-        try {
-            const { Username, Email, Password, Jmeno, Prijmeni, OpravneniID } = newData;
-            const query = 'UPDATE Uzivatel SET Username = ?, Email = ?, Password = ?, Jmeno = ?, Prijmeni = ?, OpravneniID = ? WHERE UzivatelID = ?';
-            await this.pool.query(query, [Username, Email, Password, Jmeno, Prijmeni, OpravneniID, userId]);
-        } catch (error) {
-            throw error;
-        }
+    async updateUser(userId, userData) {
+        await this.pool.query('UPDATE Uzivatel SET ? WHERE UzivatelID = ?', [userData, userId]);
     }
 
-    // Smazání uživatele
     async deleteUser(userId) {
-        try {
-            const query = 'DELETE FROM Uzivatel WHERE UzivatelID = ?';
-            await this.pool.query(query, [userId]);
-        } catch (error) {
-            throw error;
-        }
+        await this.pool.query('DELETE FROM Uzivatel WHERE UzivatelID = ?', [userId]);
     }
 
-    // Ověření uživatele
-    async authenticateUser(username, password) {
-        try {
-            const user = await this.getUserByUsername(username);
-            if (!user) {
-                return null;
-            }
+    async getUserByUsername(username) {
+        const [rows] = await this.pool.query('SELECT * FROM Uzivatel WHERE Username = ?', [username]);
+        return rows[0];
+    }
 
-            const isMatch = await bcrypt.compare(password, user.Password);
-            return isMatch ? user : null;
-        } catch (error) {
-            throw error;
-        }
+    async getUserPosts(userId) {
+        const [rows] = await this.pool.query('SELECT * FROM Prispevek WHERE UzivatelID = ?', [userId]);
+        return rows;
     }
 }
 

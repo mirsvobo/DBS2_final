@@ -1,10 +1,20 @@
+const bcrypt = require('bcrypt');
 const UserModel = require('../models/UserModel');
+const PostModel = require('../models/PostModel');
+const pool = require('../db');
 
 class UserController {
     constructor() {
-        this.userModel = new UserModel();
+        this.userModel = new UserModel(pool);
+        this.postModel = new PostModel(pool);
+    }
+    async getUserByUsername(username) {
+        return await this.userModel.getUserByUsername(username);
     }
 
+    async getUserPosts(userId) {
+        return await this.userModel.getUserPosts(userId);
+    }
     async addUser(req, res) {
         const { username, email, password, firstName, lastName } = req.body;
         try {
@@ -64,6 +74,28 @@ class UserController {
         try {
             await this.userModel.deleteUser(userId);
             res.json({ message: 'Uživatel byl odstraněn' });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+
+    async getProfile(req, res) {
+        const userId = req.session.user.id;
+        try {
+            const user = await this.userModel.getUserById(userId);
+            const posts = await this.postModel.getPostsByUserId(userId);
+            res.render('profile', { user, posts });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+
+    async updateProfile(req, res) {
+        const userId = req.params.id;
+        const newData = req.body;
+        try {
+            await this.userModel.updateUser(userId, newData);
+            res.redirect('/profile');
         } catch (error) {
             res.status(500).json({ message: error.message });
         }

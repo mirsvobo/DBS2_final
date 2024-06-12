@@ -4,13 +4,12 @@ const dotenv = require('dotenv');
 const path = require('path');
 const session = require('express-session');
 const morgan = require('morgan');
-const methodOverride = require('method-override');
 const { createLogger, transports, format } = require('winston');
 const pool = require('./db'); // Import poolu z db.js
 
 dotenv.config();
 
-const app = express();
+const app = express(); // Definice app
 
 // Nastavení EJS jako šablonovacího enginu
 app.set('view engine', 'ejs');
@@ -20,7 +19,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(methodOverride('_method'));
 
 // Nastavení session
 app.use(session({
@@ -60,6 +58,7 @@ const PrivateMessagesRoutes = require('./routes/privateMessages');
 const ReportRoutes = require('./routes/reports');
 const UserPrivateMessageRoutes = require('./routes/userPrivateMessages');
 const AuthRoutes = require('./routes/auth');
+const ProfileRoutes = require('./routes/profile');
 
 // Použití routerů
 app.use('/users', UserRoutes);
@@ -76,6 +75,7 @@ app.use('/privateMessages', PrivateMessagesRoutes);
 app.use('/reports', ReportRoutes);
 app.use('/userPrivateMessages', UserPrivateMessageRoutes);
 app.use('/auth', AuthRoutes);
+app.use('/profile', ProfileRoutes);
 
 // Domovská stránka
 const PostModel = require('./models/PostModel');

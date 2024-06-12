@@ -1,3 +1,5 @@
+const pool = require('../db');
+
 class PostModel {
     constructor(pool) {
         this.pool = pool;
@@ -26,6 +28,11 @@ class PostModel {
 
     async deletePost(postId) {
         await this.pool.query('DELETE FROM Prispevek WHERE PrispevekID = ?', [postId]);
+    }
+
+    async getPostsByUserId(userId) {
+        const [rows] = await this.pool.query('SELECT * FROM Prispevek WHERE UzivatelID = ?', [userId]);
+        return rows;
     }
 }
 

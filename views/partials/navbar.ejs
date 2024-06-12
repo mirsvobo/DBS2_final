@@ -1,0 +1,33 @@
+<header class="bg-dark text-white text-center py-3">
+    <h1>Studentské Forum</h1>
+</header>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Domů</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <% if (!user) { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/login">Přihlásit se</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/register">Registrovat se</a>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <span class="nav-link">Vítejte, <%= user.Username %>!</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/profile">Můj profil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/logout">Odhlásit se</a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
