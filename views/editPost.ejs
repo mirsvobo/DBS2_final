@@ -40,7 +40,6 @@
 </nav>
 <div class="container mt-4">
     <h2>Upravit příspěvek</h2>
-    <!-- views/editPost.ejs -->
     <form action="/posts/<%= post.PrispevekID %>?_method=PUT" method="POST">
         <div class="mb-3">
             <label for="Titulek" class="form-label">Titulek:</label>
@@ -63,6 +62,9 @@
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Upravit příspěvek</button>
+    </form>
+    <form action="/posts/<%= post.PrispevekID %>?_method=DELETE" method="POST" style="margin-top: 20px;">
+        <button type="submit" class="btn btn-danger">Smazat příspěvek</button>
     </form>
 </div>
 <footer class="bg-dark text-white text-center py-3 mt-4">

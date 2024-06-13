@@ -1,20 +1,16 @@
 const CommentModel = require('../models/CommentModel');
-const PostModel = require('../models/PostModel'); // Přidáme import modelu pro příspěvky
-const pool = require('../db');
+const PostModel = require('../models/PostModel');
+const pool = require('../db'); // Import poolu z db.js
 
 const commentModel = new CommentModel(pool);
-const postModel = new PostModel(pool); // Vytvoříme instanci modelu pro příspěvky
+const postModel = new PostModel(pool);
 
 const createComment = async (req, res) => {
     const postId = req.params.postId;
     const { Obsah_komentare } = req.body;
     const UzivatelID = req.session.user.UzivatelID;
     try {
-        const post = await postModel.getPostById(postId); // Zkontrolujeme, zda příspěvek existuje
-        if (!post) {
-            return res.status(404).json({ message: 'Příspěvek nenalezen' });
-        }
-        await commentModel.createComment({ Obsah_komentare, UzivatelID, PrispevekID: postId });
+        await commentModel.createComment({ Obsah_komentare, PrispevekID: postId, UzivatelID });
         res.redirect(`/posts/${postId}`);
     } catch (error) {
         res.status(500).json({ message: error.message });

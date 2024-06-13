@@ -10,6 +10,8 @@ const pool = require('./db'); // Import poolu z db.js
 dotenv.config();
 
 const app = express(); // Definice app
+const methodOverride = require('method-override');
+app.use(methodOverride('_method'));
 
 // Nastavení EJS jako šablonovacího enginu
 app.set('view engine', 'ejs');

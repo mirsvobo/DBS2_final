@@ -42,10 +42,13 @@
     <h2>Upravit komentář</h2>
     <form action="/posts/<%= postId %>/comments/<%= comment.KomentarID %>?_method=PUT" method="POST">
         <div class="mb-3">
-            <label for="Obsah_komentare" class="form-label">Komentář</label>
+            <label for="Obsah_komentare" class="form-label">Obsah komentáře:</label>
             <textarea id="Obsah_komentare" name="Obsah_komentare" class="form-control" required><%= comment.Obsah_komentare %></textarea>
         </div>
         <button type="submit" class="btn btn-primary">Upravit komentář</button>
+    </form>
+    <form action="/posts/<%= postId %>/comments/<%= comment.KomentarID %>?_method=DELETE" method="POST" style="margin-top: 20px;">
+        <button type="submit" class="btn btn-danger">Smazat komentář</button>
     </form>
 </div>
 <footer class="bg-dark text-white text-center py-3 mt-4">

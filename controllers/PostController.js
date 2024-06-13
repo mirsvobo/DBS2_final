@@ -13,6 +13,19 @@ const getAllPosts = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+const getPostForEdit = async (req, res) => {
+    const postId = req.params.id;
+    try {
+        const post = await postModel.getPostById(postId);
+        if (post) {
+            res.render('editPost', { post, user: req.session.user });
+        } else {
+            res.status(404).json({ message: 'Příspěvek nenalezen' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
 const showCreatePostForm = (req, res) => {
     res.render('createPost', { user: req.session.user });
@@ -58,7 +71,7 @@ const updatePost = async (req, res) => {
 const deletePost = async (req, res) => {
     const postId = req.params.id;
     try {
-        await commentModel.deleteCommentsByPostId(postId); // Přidáno
+        await commentModel.deleteCommentsByPostId(postId); // Přidáno: nejprve smažeme komentáře
         await postModel.deletePost(postId);
         res.redirect('/');
     } catch (error) {
@@ -72,5 +85,6 @@ module.exports = {
     createPost,
     getPostById,
     updatePost,
-    deletePost
+    deletePost,
+    getPostForEdit
 };
