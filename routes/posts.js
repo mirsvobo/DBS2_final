@@ -14,7 +14,7 @@ const {
     updateComment,
     deleteComment,
     getCommentById
-} = require('../controllers/CommentController');
+} = require('../controllers/CommentController'); // Opraven import
 const { isLoggedIn, isAuthorOrAdmin } = require('../middleware/auth');
 
 // Příspěvky
@@ -22,10 +22,9 @@ router.get('/', getAllPosts);
 router.get('/new', isLoggedIn, showCreatePostForm);
 router.post('/', isLoggedIn, createPost);
 router.get('/:id', getPostById);
-router.get('/:id/edit', isLoggedIn, isAuthorOrAdmin, (req, res) => { res.render('editPost', { user: req.session.user }); }); // Přidána trasa pro editaci
+router.get('/:id/edit', isLoggedIn, isAuthorOrAdmin, getPostForEdit);
 router.put('/:id', isLoggedIn, isAuthorOrAdmin, updatePost);
 router.delete('/:id', isLoggedIn, isAuthorOrAdmin, deletePost);
-router.get('/:id/edit', isLoggedIn, isAuthorOrAdmin, getPostForEdit);
 
 // Komentáře
 router.post('/:postId/comments', isLoggedIn, createComment);
